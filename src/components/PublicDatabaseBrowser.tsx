@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Globe, Search } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { getProfiles, getWorkspaces } from "@/lib/localData";
 
 interface PublicWorkspace {
   id: string;
@@ -15,7 +15,7 @@ interface PublicWorkspace {
   description?: string;
   visibility: string;
   created_at: string;
-  owner_id: string;
+  user_id: string;
   owner?: {
     id: string;
     display_name: string;
@@ -55,37 +55,15 @@ export function PublicDatabaseBrowser() {
   const fetchPublicWorkspaces = async () => {
     setLoading(true);
     try {
-      // Fetch public workspaces with owner info
-      const { data: workspaces, error } = await supabase
-        .from("workspaces")
-        .select(
-          `
-          id,
-          name,
-          description,
-          visibility,
-          created_at,
-          owner_id,
-          profiles:owner_id (
-            id,
-            display_name,
-            avatar_url
-          )
-        `
-        )
-        .eq("visibility", "public")
-        .order("created_at", { ascending: false });
+      const profiles = getProfiles();
+      const profileMap = new Map(profiles.map((profile) => [profile.id, profile]));
+      const workspaces = getWorkspaces()
+        .filter((workspace) => workspace.visibility === "public")
+        .sort((a, b) => b.created_at.localeCompare(a.created_at));
 
-      if (error) {
-        console.error("Error fetching public workspaces:", error);
-        toast.error("Erro ao carregar bases públicas");
-        return;
-      }
-
-      // Transform the data to flatten the owner info
-      const transformedWorkspaces = (workspaces || []).map((ws: any) => ({
-        ...ws,
-        owner: Array.isArray(ws.profiles) ? ws.profiles[0] : ws.profiles,
+      const transformedWorkspaces = workspaces.map((workspace) => ({
+        ...workspace,
+        owner: profileMap.get(workspace.user_id),
       }));
 
       setPublicWorkspaces(transformedWorkspaces);
@@ -216,7 +194,7 @@ export function PublicDatabaseBrowser() {
           </div>
           <div>
             <p className="text-4xl font-black text-[#d4823b] mb-2" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
-              {new Set(publicWorkspaces.map((w) => w.owner_id)).size}
+              {new Set(publicWorkspaces.map((w) => w.user_id)).size}
             </p>
             <p className="text-sm text-white/60 uppercase tracking-wide font-bold">Criadores</p>
           </div>

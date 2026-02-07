@@ -1,7 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import ReactCrop, { type Crop, centerCrop, makeAspectCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
- import { supabase } from "@/integrations/supabase/client";
  import { Button } from "@/components/ui/button";
  import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -38,6 +37,15 @@ function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: numbe
     mediaWidth,
     mediaHeight
   );
+}
+
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("Failed to read image"));
+    reader.readAsDataURL(blob);
+  });
 }
 
 async function getCroppedImg(
@@ -140,25 +148,9 @@ async function getCroppedImg(
 
       setPreview(URL.createObjectURL(croppedBlob));
 
-      const fileName = `${type}-${Date.now()}.jpg`;
-       const filePath = `${userId}/${fileName}`;
- 
-       const { error: uploadError } = await supabase.storage
-         .from("profile-images")
-        .upload(filePath, croppedBlob, { 
-          upsert: true,
-          contentType: "image/jpeg"
-        });
- 
-       if (uploadError) throw uploadError;
- 
-      const {
-        data: { publicUrl },
-      } = supabase.storage
-         .from("profile-images")
-         .getPublicUrl(filePath);
- 
-       onUpload(publicUrl);
+      const dataUrl = await blobToDataUrl(croppedBlob);
+      setPreview(dataUrl);
+      onUpload(dataUrl);
        toast.success("Imagem carregada com sucesso!");
      } catch (error) {
        console.error("Upload error:", error);

@@ -1,6 +1,6 @@
- import { useState, useEffect } from "react";
- import { supabase } from "@/integrations/supabase/client";
- import { useAuth } from "@/contexts/AuthContext";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { apiRequest } from "@/lib/api";
  
  export interface Profile {
    id: string;
@@ -29,38 +29,65 @@
    }, [user]);
  
    const fetchProfile = async () => {
-     if (!user) return;
-     
-     setLoading(true);
- 
-     const { data, error } = await supabase
-       .from("profiles")
-       .select("*")
-       .eq("id", user.id)
-       .maybeSingle();
- 
-     if (error) {
-       console.error("Error fetching profile:", error);
-     } else {
-       setProfile(data);
-     }
-     setLoading(false);
-   };
+    if (!user) return;
+    setLoading(true);
+
+    try {
+      const nextProfile = await apiRequest<Profile>(`/profiles/${user.id}`);
+      setProfile(nextProfile);
+    } catch (error) {
+      const displayName = user.user_metadata?.display_name || user.email?.split("@")[0] || "Utilizador";
+      try {
+        const created = await apiRequest<Profile>(`/profiles/${user.id}`, {
+          method: "PUT",
+          body: JSON.stringify({
+            display_name: displayName,
+            avatar_url: null,
+            bio: null,
+            banner_url: null,
+            is_private: false,
+          }),
+        });
+        setProfile(created);
+      } catch (createError) {
+        console.error("Error creating profile:", createError);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
  
    const updateProfile = async (updates: Partial<Profile>) => {
-     if (!user) return { error: new Error("Not authenticated") };
- 
-     const { error } = await supabase
-       .from("profiles")
-       .update(updates)
-       .eq("id", user.id);
- 
-     if (!error) {
-       await fetchProfile();
-     }
- 
-     return { error };
-   };
+    if (!user) return { error: new Error("Not authenticated") };
+
+    const current = profile || {
+      id: user.id,
+      display_name: user.user_metadata?.display_name || user.email?.split("@")[0] || "Utilizador",
+      avatar_url: null,
+      bio: null,
+      banner_url: null,
+      is_private: false,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    try {
+      const updated = await apiRequest<Profile>(`/profiles/${user.id}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          display_name: updates.display_name ?? current.display_name,
+          avatar_url: updates.avatar_url ?? current.avatar_url,
+          bio: updates.bio ?? current.bio,
+          banner_url: updates.banner_url ?? current.banner_url,
+          is_private: updates.is_private ?? current.is_private,
+        }),
+      });
+      setProfile(updated);
+      return { error: null };
+    } catch (error) {
+      return { error: error as Error };
+    }
+  };
  
    return { profile, loading, updateProfile, refetch: fetchProfile };
  }

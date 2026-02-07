@@ -18,12 +18,12 @@ import { faScrewdriverWrench } from "@fortawesome/free-solid-svg-icons";
 import { ArrowLeft, Globe, Lock, User, Users, Palette, Trash2, Check, X, UserMinus, Send, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { Profile as ProfileType } from "@/hooks/useProfile";
 import { ImageUpload } from "@/components/profile/ImageUpload";
 import { getRandomDontStarveBio } from "@/data/dontStarveBios";
 import { WorkspacePreview } from "@/components/WorkspacePreview";
 import { useNavigate } from "react-router-dom";
+import { findProfilesByName } from "@/lib/localData";
 
 export default function Profile() {
    const { user, loading: authLoading } = useAuth();
@@ -124,18 +124,8 @@ export default function Profile() {
      if (!searchQuery.trim()) return;
  
      setIsSearching(true);
-     const { data, error } = await supabase
-       .from("profiles")
-       .select("*")
-       .ilike("display_name", `%${searchQuery}%`)
-       .neq("id", user.id)
-       .limit(10);
- 
-     if (error) {
-       toast.error("Erro na pesquisa");
-     } else {
-       setSearchResults(data || []);
-     }
+    const results = findProfilesByName(searchQuery, user.id).slice(0, 10);
+    setSearchResults(results as ProfileType[]);
      setIsSearching(false);
    };
  
