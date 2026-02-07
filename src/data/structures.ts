@@ -238,7 +238,7 @@ export const structures: Structure[] = [
     name: "Salt Rack",
     category: "food",
     description: "Produces salt from sea water",
-    icon: "🧂",
+    icon: "🏖️",
     iconImage: getStructureImage("salt-rack"),
     materials: [
       { name: "Boards", amount: 2 },
@@ -253,7 +253,7 @@ export const structures: Structure[] = [
     name: "Campfire",
     category: "light",
     description: "Basic light and warmth source",
-    icon: "🔥",
+    icon: "🏕️",
     iconImage: getStructureImage("campfire"),
     materials: [
       { name: "Cut Grass", amount: 3 },
@@ -303,7 +303,7 @@ export const structures: Structure[] = [
     name: "Mushroom Light (Bloom)",
     category: "light",
     description: "Bright fungal lighting",
-    icon: "🍄",
+    icon: "🍄‍🟫",
     iconImage: getStructureImage("mushroom-light-bloom"),
     materials: [
       { name: "Rope", amount: 1 },
@@ -316,7 +316,7 @@ export const structures: Structure[] = [
     name: "Scaled Furnace",
     category: "light",
     description: "Warmth that never goes out",
-    icon: "🔥",
+    icon: "🌋",
     iconImage: getStructureImage("scaled-furnace"),
     materials: [
       { name: "Dragonfly Scales", amount: 1 },
@@ -383,26 +383,13 @@ export const structures: Structure[] = [
   {
     id: "cartographer-sign",
     name: "Directional Sign",
-    category: "refining",
+    category: "structures",
     description: "Marks points of interest",
-    icon: "🪧",
+    icon: "🧭",
     iconImage: getStructureImage("directional-sign"),
     materials: [
       { name: "Boards", amount: 2 },
       { name: "Charcoal", amount: 2 },
-    ],
-  },
-  {
-    id: "composting-bin",
-    name: "Composting Bin",
-    category: "refining",
-    description: "Turns organic waste into compost",
-    icon: "🪱",
-    iconImage: getStructureImage("composting-bin"),
-    materials: [
-      { name: "Boards", amount: 4 },
-      { name: "Rot", amount: 6 },
-      { name: "Manure", amount: 3 },
     ],
   },
 
@@ -423,7 +410,7 @@ export const structures: Structure[] = [
     name: "Scaled Chest",
     category: "structures",
     description: "Fireproof storage",
-    icon: "📦",
+    icon: "🗃️",
     iconImage: getStructureImage("scaled-chest"),
     materials: [
       { name: "Dragonfly Scales", amount: 1 },
@@ -460,7 +447,7 @@ export const structures: Structure[] = [
     name: "Fence",
     category: "structures",
     description: "Low barrier for animals",
-    icon: "🚧",
+    icon: "🪵",
     iconImage: getStructureImage("fence"),
     materials: [
       { name: "Boards", amount: 1 },
@@ -472,7 +459,7 @@ export const structures: Structure[] = [
     name: "Fence Gate",
     category: "structures",
     description: "Gate for fences",
-    icon: "🚪",
+    icon: "🚧",
     iconImage: getStructureImage("fence-gate"),
     materials: [
       { name: "Boards", amount: 2 },
@@ -495,7 +482,7 @@ export const structures: Structure[] = [
     name: "Stone Wall",
     category: "structures",
     description: "Stronger defensive wall",
-    icon: "🧱",
+    icon: "🪨",
     iconImage: getStructureImage("stone-wall"),
     materials: [
       { name: "Cut Stone", amount: 2 },
@@ -506,7 +493,7 @@ export const structures: Structure[] = [
     name: "Hay Wall",
     category: "structures",
     description: "Temporary barrier",
-    icon: "🌾",
+    icon: "🌿",
     iconImage: getStructureImage("hay-wall"),
     materials: [
       { name: "Cut Grass", amount: 4 },
@@ -518,7 +505,7 @@ export const structures: Structure[] = [
     name: "Marble Wall",
     category: "structures",
     description: "Very strong defensive wall",
-    icon: "🧱",
+    icon: "⬜",
     iconImage: getStructureImage("marble-wall"),
     materials: [
       { name: "Marble", amount: 2 },
@@ -529,7 +516,7 @@ export const structures: Structure[] = [
     name: "Thulecite Wall",
     category: "structures",
     description: "Ancient defensive wall",
-    icon: "🧱",
+    icon: "🟪",
     iconImage: getStructureImage("thulecite-wall"),
     materials: [
       { name: "Thulecite", amount: 2 },
@@ -643,7 +630,7 @@ export const structures: Structure[] = [
     name: "Improved Farm",
     category: "farming",
     description: "Grow crops faster",
-    icon: "🌾",
+    icon: "🌻",
     iconImage: getStructureImage("improved-farm"),
     materials: [
       { name: "Cut Grass", amount: 10 },
@@ -656,7 +643,7 @@ export const structures: Structure[] = [
     name: "Garden Digamajig",
     category: "farming",
     description: "Prepare farm soil",
-    icon: "🪴",
+    icon: "🔨",
     iconImage: getStructureImage("garden-digamajig"),
     materials: [
       { name: "Boards", amount: 8 },
@@ -708,7 +695,7 @@ export const structures: Structure[] = [
     name: "Salt Lick",
     category: "farming",
     description: "Attracts beefalo near your base",
-    icon: "🧂",
+    icon: "🐃",
     iconImage: getStructureImage("salt-lick"),
     materials: [
       { name: "Boards", amount: 2 },
