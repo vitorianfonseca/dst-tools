@@ -124,7 +124,7 @@ const Index = () => {
       key: "Escape",
       action: handleClearSelection,
       description: "Cancel selection",
-      category: "Ferramentas",
+      category: "Tools",
     },
     {
       key: "e",
@@ -138,14 +138,14 @@ const Index = () => {
         }
       },
       description: "Ativar/desativar borracha",
-      category: "Ferramentas",
+      category: "Tools",
     },
     {
       key: "Delete",
       action: () => {
         // This could be extended to delete selected items
       },
-      description: "Apagar item selecionado",
+      description: "Delete selected item",
       category: "Editing",
     },
   ], [handleUndo, handleRedo, handleClearSelection, canEdit, isErasingTiles]);

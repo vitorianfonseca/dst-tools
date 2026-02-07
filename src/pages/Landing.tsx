@@ -165,7 +165,7 @@ export default function Landing() {
                 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter"
                 style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
               >
-                Ferramentas Principais
+                Main Tools
               </h2>
               <p className="text-white/60">As 3 funcionalidades core do DST Tools</p>
             </div>

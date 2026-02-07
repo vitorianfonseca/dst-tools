@@ -115,7 +115,7 @@
                    </div>
                  </div>
                  <Button type="submit" className="w-full" disabled={isSubmitting}>
-                   {isSubmitting ? "A entrar..." : "Entrar"}
+                   {isSubmitting ? "Signing in..." : "Entrar"}
                  </Button>
                </form>
              </TabsContent>
