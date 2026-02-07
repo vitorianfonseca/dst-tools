@@ -154,7 +154,7 @@ async function getCroppedImg(
        toast.success("Imagem carregada com sucesso!");
      } catch (error) {
        console.error("Upload error:", error);
-       toast.error("Erro ao carregar imagem");
+       toast.error("Error loading image");
        setPreview(null);
      } finally {
        setUploading(false);
@@ -248,7 +248,7 @@ async function getCroppedImg(
               className="gap-2"
              >
               <Upload className="h-4 w-4" />
-              {uploading ? "A carregar..." : "Carregar Avatar"}
+              {uploading ? "Loading..." : "Upload Avatar"}
              </Button>
             {preview && (
               <Button
@@ -301,7 +301,7 @@ async function getCroppedImg(
           ) : (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground">
               <Upload className="h-8 w-8 mb-2" />
-              <span className="text-sm">Clica para carregar banner</span>
+              <span className="text-sm">Click to upload banner</span>
              </div>
           )}
         </div>

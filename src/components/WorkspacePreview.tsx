@@ -147,7 +147,7 @@
              {workspace.visibility === "public" ? (
                <>
                  <Lock className="h-3 w-3" />
-                 Privado
+                 Private
                </>
              ) : (
                <>

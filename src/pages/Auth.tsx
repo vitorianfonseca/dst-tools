@@ -22,7 +22,7 @@
    if (loading) {
      return (
        <div className="min-h-screen flex items-center justify-center bg-background">
-         <div className="animate-pulse text-muted-foreground">A carregar...</div>
+         <div className="animate-pulse text-muted-foreground">Loading...</div>
        </div>
      );
    }
@@ -37,7 +37,7 @@
      const { error } = await signIn(email, password);
      setIsSubmitting(false);
      if (error) {
-       toast.error("Erro ao entrar: " + error.message);
+       toast.error("Error signing in: " + error.message);
      }
    };
  
@@ -47,7 +47,7 @@
      const { error } = await signUp(email, password, displayName);
      setIsSubmitting(false);
      if (error) {
-       toast.error("Erro ao criar conta: " + error.message);
+       toast.error("Error creating account: " + error.message);
      }
      // Auto-login happens automatically with auto-confirm enabled
    };

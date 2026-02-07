@@ -53,7 +53,7 @@ export default function Profile() {
    if (authLoading || profileLoading) {
      return (
        <div className="min-h-screen flex items-center justify-center bg-background">
-         <div className="animate-pulse text-muted-foreground">A carregar...</div>
+         <div className="animate-pulse text-muted-foreground">Loading...</div>
        </div>
      );
    }
@@ -114,7 +114,7 @@ export default function Profile() {
    const handleDeleteWorkspace = async (id: string) => {
      const { error } = await deleteWorkspace(id);
      if (error) {
-       toast.error("Erro ao eliminar workspace");
+       toast.error("Error deleting workspace");
      } else {
        toast.success("Workspace eliminado");
      }
@@ -142,7 +142,7 @@ export default function Profile() {
    const handleAcceptRequest = async (requestId: string) => {
      const { error } = await acceptFriendRequest(requestId);
      if (error) {
-       toast.error("Erro ao aceitar pedido");
+       toast.error("Error accepting request");
      } else {
        toast.success("Amigo adicionado!");
      }
@@ -151,7 +151,7 @@ export default function Profile() {
    const handleRejectRequest = async (requestId: string) => {
      const { error } = await rejectFriendRequest(requestId);
      if (error) {
-       toast.error("Erro ao rejeitar pedido");
+       toast.error("Error rejecting request");
      } else {
        toast.success("Pedido rejeitado");
      }
@@ -160,7 +160,7 @@ export default function Profile() {
    const handleCancelRequest = async (requestId: string) => {
      const { error } = await cancelFriendRequest(requestId);
      if (error) {
-       toast.error("Erro ao cancelar pedido");
+       toast.error("Error canceling request");
      } else {
        toast.success("Pedido cancelado");
      }
@@ -169,7 +169,7 @@ export default function Profile() {
    const handleRemoveFriend = async (friendId: string) => {
      const { error } = await removeFriend(friendId);
      if (error) {
-       toast.error("Erro ao remover amigo");
+       toast.error("Error removing friend");
      } else {
        toast.success("Amigo removido");
      }
@@ -274,7 +274,7 @@ export default function Profile() {
                  <p className="text-white/60">Gere os teus planos de base e a sua visibilidade</p>
                </div>
                  {workspacesLoading ? (
-                   <div className="text-center py-12 text-white/60">A carregar...</div>
+                   <div className="text-center py-12 text-white/60">Loading...</div>
                  ) : workspaces.length === 0 ? (
                    <div className="text-center py-12 text-white/60">
                      You don't have any workspaces yet. Create one on the main page!
@@ -308,7 +308,7 @@ export default function Profile() {
                </div>
                  <div className="flex gap-2">
                    <Input
-                     placeholder="Procurar por nome..."
+                     placeholder="Search by name..."
                      value={searchQuery}
                      onChange={(e) => setSearchQuery(e.target.value)}
                      onKeyDown={(e) => e.key === "Enter" && handleSearchUsers()}
@@ -449,7 +449,7 @@ export default function Profile() {
                  {/* Privacy Toggle */}
                  <div className="flex items-center justify-between p-4 rounded-lg bg-black/60 border border-white/10">
                    <div className="space-y-0.5">
-                     <Label className="text-white font-bold">Perfil Privado</Label>
+                     <Label className="text-white font-bold">Private Profile</Label>
                      <p className="text-sm text-white/60">
                        Apenas amigos podem ver o teu perfil e workspaces
                      </p>
