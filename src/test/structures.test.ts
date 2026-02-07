@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { structures } from "../data/structures";
 import { tileMappings } from "../data/tileMappings";
 
-describe("structures data validation", () => {
+describe("Structure and tile mapping validation", () => {
   it("should not have duplicate structure IDs", () => {
     const ids = structures.map((s) => s.id);
     const uniqueIds = new Set(ids);
