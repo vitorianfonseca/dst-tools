@@ -355,7 +355,7 @@ export const structures: Structure[] = [
   {
     id: "ice-flingomatic",
     name: "Ice Flingomatic",
-    category: "survival",
+    category: "structures",
     description: "Extinguishes fires and chills",
     icon: "🧯",
     iconImage: getStructureImage("ice-flingomatic"),
