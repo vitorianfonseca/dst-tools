@@ -181,7 +181,7 @@ async function getCroppedImg(
         <DialogHeader>
           <DialogTitle>Recortar imagem</DialogTitle>
           <DialogDescription>
-            Ajusta a área da imagem que queres usar como {type === "avatar" ? "avatar" : "banner"}
+            Adjust the area of the image you want to use as {type === "avatar" ? "avatar" : "banner"}
           </DialogDescription>
         </DialogHeader>
         <div className="flex justify-center py-4">

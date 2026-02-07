@@ -70,7 +70,7 @@ export function PublicDatabaseBrowser() {
       setFilteredWorkspaces(transformedWorkspaces);
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Erro ao carregar bases públicas");
+      toast.error("Error loading public bases");
     } finally {
       setLoading(false);
     }
@@ -92,7 +92,7 @@ export function PublicDatabaseBrowser() {
     return (
       <div className="bg-black/40 border border-white/10 rounded-lg p-12">
         <div className="flex items-center justify-center">
-          <div className="animate-pulse text-white/60">A carregar bases de dados públicas...</div>
+          <div className="animate-pulse text-white/60">Loading public databases...</div>
         </div>
       </div>
     );
@@ -107,13 +107,13 @@ export function PublicDatabaseBrowser() {
             <Globe className="h-8 w-8 text-[#d4823b]" />
             Bases da Comunidade
           </h2>
-          <p className="text-white/60">Explora planos públicos criados por outros jogadores</p>
+          <p className="text-white/60">Explore public plans created by other players</p>
         </div>
         <div className="flex gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-white/40" />
             <Input
-              placeholder="Procurar por nome, descrição ou criador..."
+              placeholder="Search by name, description or creator..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-11 h-12 bg-black/60 border-white/20 text-white placeholder:text-white/40"
@@ -127,8 +127,8 @@ export function PublicDatabaseBrowser() {
         <div className="bg-black/40 border border-white/10 rounded-lg p-12">
           <div className="text-center text-white/60 text-lg">
             {publicWorkspaces.length === 0
-              ? "Nenhuma base de dados pública ainda"
-              : "Nenhuma base encontrada com essa pesquisa"}
+              ? "No public databases yet"
+              : "No bases found with that search"}
           </div>
         </div>
       ) : (
@@ -158,14 +158,14 @@ export function PublicDatabaseBrowser() {
                 {/* Workspace Info */}
                 <h3 className="font-black text-lg mb-2 line-clamp-2 uppercase tracking-tight" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>{workspace.name}</h3>
                 <p className="text-sm text-white/60 mb-4 line-clamp-2">
-                  {workspace.description || "Sem descrição"}
+                  {workspace.description || "No description"}
                 </p>
 
                 {/* Metadata */}
                 <div className="flex items-center justify-between mb-4">
                   <Badge className="text-xs gap-1.5 bg-[#d4823b]/20 border border-[#d4823b]/30 text-[#d4823b]">
                     <Globe className="h-3 w-3" />
-                    Público
+                    Public
                   </Badge>
                   <span className="text-xs text-white/50">
                     {new Date(workspace.created_at).toLocaleDateString("pt-PT")}
@@ -190,13 +190,13 @@ export function PublicDatabaseBrowser() {
         <div className="grid grid-cols-3 gap-8 text-center">
           <div>
             <p className="text-4xl font-black text-[#d4823b] mb-2" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>{publicWorkspaces.length}</p>
-            <p className="text-sm text-white/60 uppercase tracking-wide font-bold">Bases Públicas</p>
+            <p className="text-sm text-white/60 uppercase tracking-wide font-bold">Public Bases</p>
           </div>
           <div>
             <p className="text-4xl font-black text-[#d4823b] mb-2" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
               {new Set(publicWorkspaces.map((w) => w.user_id)).size}
             </p>
-            <p className="text-sm text-white/60 uppercase tracking-wide font-bold">Criadores</p>
+            <p className="text-sm text-white/60 uppercase tracking-wide font-bold">Creators</p>
           </div>
           <div>
             <p className="text-4xl font-black text-[#d4823b] mb-2" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>{filteredWorkspaces.length}</p>

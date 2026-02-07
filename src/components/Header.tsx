@@ -59,7 +59,7 @@ export function Header({
            <>
              <Badge variant="secondary" className="gap-1.5 text-xs">
                <Eye className="h-3 w-3" />
-               Visualização {ownerName ? `• ${ownerName}` : ""}
+               View Only {ownerName ? `• ${ownerName}` : ""}
              </Badge>
              {onDuplicate && (
                <Button

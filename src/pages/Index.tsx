@@ -72,7 +72,7 @@ const Index = () => {
     if (state) {
       setStructuresDirectly(state.structures as PlacedStructure[]);
       setTilesDirectly(state.groundTiles as PlacedGroundTile[]);
-      toast.success("Ação desfeita");
+      toast.success("Action undone");
     }
   }, [undo, setStructuresDirectly, setTilesDirectly]);
 
@@ -81,7 +81,7 @@ const Index = () => {
     if (state) {
       setStructuresDirectly(state.structures as PlacedStructure[]);
       setTilesDirectly(state.groundTiles as PlacedGroundTile[]);
-      toast.success("Ação refeita");
+      toast.success("Action redone");
     }
   }, [redo, setStructuresDirectly, setTilesDirectly]);
 
@@ -102,28 +102,28 @@ const Index = () => {
       key: "z",
       ctrl: true,
       action: handleUndo,
-      description: "Desfazer última ação",
-      category: "Edição",
+      description: "Undo last action",
+      category: "Editing",
     },
     {
       key: "z",
       ctrl: true,
       shift: true,
       action: handleRedo,
-      description: "Refazer ação",
-      category: "Edição",
+      description: "Redo action",
+      category: "Editing",
     },
     {
       key: "y",
       ctrl: true,
       action: handleRedo,
-      description: "Refazer ação (alternativo)",
-      category: "Edição",
+      description: "Redo action (alternative)",
+      category: "Editing",
     },
     {
       key: "Escape",
       action: handleClearSelection,
-      description: "Cancelar seleção",
+      description: "Cancel selection",
       category: "Ferramentas",
     },
     {
@@ -146,7 +146,7 @@ const Index = () => {
         // This could be extended to delete selected items
       },
       description: "Apagar item selecionado",
-      category: "Edição",
+      category: "Editing",
     },
   ], [handleUndo, handleRedo, handleClearSelection, canEdit, isErasingTiles]);
 

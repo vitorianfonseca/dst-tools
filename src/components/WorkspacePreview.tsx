@@ -152,7 +152,7 @@
              ) : (
                <>
                  <Globe className="h-3 w-3" />
-                 Público
+                 Public
                </>
              )}
            </Button>

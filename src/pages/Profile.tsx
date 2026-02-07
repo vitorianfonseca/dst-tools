@@ -97,7 +97,7 @@ export default function Profile() {
      if (error) {
        toast.error("Erro ao atualizar privacidade");
      } else {
-       toast.success(profile?.is_private ? "Perfil agora é público" : "Perfil agora é privado");
+       toast.success(profile?.is_private ? "Profile is now public" : "Profile is now private");
      }
    };
  
@@ -105,9 +105,9 @@ export default function Profile() {
      const newVisibility = workspace.visibility === "public" ? "private" : "public";
      const { error } = await updateWorkspace(workspace.id, { visibility: newVisibility });
      if (error) {
-       toast.error("Erro ao atualizar visibilidade");
+       toast.error("Error updating visibility");
      } else {
-       toast.success(`Workspace agora é ${newVisibility === "public" ? "público" : "privado"}`);
+       toast.success(`Workspace is now ${newVisibility === "public" ? "public" : "private"}`);
      }
    };
  
@@ -224,14 +224,14 @@ export default function Profile() {
                    <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-2" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
                      {profile?.display_name || "Utilizador"}
                    </h1>
-                   <p className="text-lg text-white/70">{profile?.bio || "Sem descrição"}</p>
+                   <p className="text-lg text-white/70">{profile?.bio || "No description"}</p>
                  </div>
                  <Badge 
                    variant={profile?.is_private ? "secondary" : "default"} 
                    className="gap-2 px-4 py-2 text-sm bg-black/60 border border-white/20 text-white"
                  >
                    {profile?.is_private ? <Lock className="h-4 w-4" /> : <Globe className="h-4 w-4" />}
-                   {profile?.is_private ? "Privado" : "Público"}
+                   {profile?.is_private ? "Privado" : "Public"}
                  </Badge>
                </div>
              </div>
@@ -277,7 +277,7 @@ export default function Profile() {
                    <div className="text-center py-12 text-white/60">A carregar...</div>
                  ) : workspaces.length === 0 ? (
                    <div className="text-center py-12 text-white/60">
-                     Ainda não tens workspaces. Cria um na página principal!
+                     You don't have any workspaces yet. Create one on the main page!
                    </div>
                  ) : (
                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -412,7 +412,7 @@ export default function Profile() {
                </div>
                  {friends.length === 0 ? (
                    <div className="text-center py-12 text-white/60">
-                     Ainda não tens amigos adicionados
+                     You don't have any friends added yet
                    </div>
                  ) : (
                    <div className="space-y-3">
@@ -443,7 +443,7 @@ export default function Profile() {
              <div className="bg-black/40 border border-white/10 rounded-lg p-8">
                <div className="mb-6">
                  <h2 className="text-2xl font-black uppercase tracking-tight mb-2" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>Personalizar Perfil</h2>
-                 <p className="text-white/60">Edita a tua informação e aparência</p>
+                 <p className="text-white/60">Edit your information and appearance</p>
                </div>
                <div className="space-y-6">
                  {/* Privacy Toggle */}
@@ -486,7 +486,7 @@ export default function Profile() {
                        />
                      </div>
                      <div className="space-y-2">
-                       <Label htmlFor="display-name" className="text-white font-bold">Nome de Exibição</Label>
+                       <Label htmlFor="display-name" className="text-white font-bold">Display Name</Label>
                        <Input
                          id="display-name"
                          value={displayName}
@@ -506,14 +506,14 @@ export default function Profile() {
                            className="gap-1.5 text-xs h-7 text-[#d4823b] hover:text-[#b56f2f] hover:bg-white/10"
                          >
                            <Sparkles className="h-3 w-3" />
-                           Bio aleatória
+                           Random Bio
                          </Button>
                        </div>
                        <Textarea
                          id="bio"
                          value={bio}
                          onChange={(e) => setBio(e.target.value)}
-                         placeholder="Uma breve descrição sobre ti..."
+                         placeholder="A brief description about you..."
                          rows={2}
                          className="bg-black/60 border-white/20 text-white placeholder:text-white/40"
                        />
