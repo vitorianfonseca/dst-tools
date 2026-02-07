@@ -386,23 +386,10 @@ export const structures: Structure[] = [
     category: "refining",
     description: "Marks points of interest",
     icon: "🪧",
-    iconImage: getStructureImage("directional-sign"),
+    iconImage: getStructureImage("cartographer-sign"),
     materials: [
       { name: "Boards", amount: 2 },
       { name: "Charcoal", amount: 2 },
-    ],
-  },
-  {
-    id: "composting-bin",
-    name: "Composting Bin",
-    category: "refining",
-    description: "Turns organic waste into compost",
-    icon: "🪱",
-    iconImage: getStructureImage("composting-bin"),
-    materials: [
-      { name: "Boards", amount: 4 },
-      { name: "Rot", amount: 6 },
-      { name: "Manure", amount: 3 },
     ],
   },
 
