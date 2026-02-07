@@ -4,19 +4,13 @@
  import { supabase } from "@/integrations/supabase/client";
  import { toast } from "sonner";
  import { Json } from "@/integrations/supabase/types";
- 
- export interface PlacedStructure {
-   id: string;
-   structure: Structure;
-   gridX: number;
-   gridY: number;
-   built: boolean;
-  isNew?: boolean;
- }
- 
- interface WorkspaceData {
-   structures?: PlacedStructure[];
- }
+ import { 
+  validateWorkspaceData, 
+  WorkspaceDataSchema,
+  type PlacedStructure 
+} from "@/schemas/workspace";
+
+export type { PlacedStructure };
  
  export type SyncStatus = "idle" | "saving" | "saved" | "error";
  
@@ -41,8 +35,16 @@
      }
  
      lastWorkspaceIdRef.current = workspace.id;
-     const data = workspace.data as WorkspaceData | null;
-     setPlacedStructures(data?.structures || []);
+     
+     // Validate workspace data
+     const validationResult = validateWorkspaceData(workspace.data);
+     
+     if (!validationResult.success) {
+       console.error("Invalid workspace data:", validationResult.error);
+       toast.error("Os dados do workspace estão corrompidos. Um workspace vazio será carregado.");
+     }
+     
+     setPlacedStructures(validationResult.data.structures || []);
    }, [workspace]);
  
    // Save structures to database (debounced)
@@ -59,10 +61,21 @@
      setSyncStatus("saving");
  
      saveTimeoutRef.current = setTimeout(async () => {
-       const newData: WorkspaceData = { structures };
+       const newData = { structures };
+       
+       // Validate data before saving
+       const validationResult = WorkspaceDataSchema.safeParse(newData);
+       
+       if (!validationResult.success) {
+         console.error("Invalid data to save:", validationResult.error);
+         toast.error("Os dados são inválidos e não podem ser guardados");
+         setSyncStatus("error");
+         return;
+       }
+       
        const { error } = await supabase
          .from("workspaces")
-         .update({ data: newData as unknown as Json })
+         .update({ data: validationResult.data as unknown as Json })
          .eq("id", workspace.id);
  
        if (error) {
@@ -70,7 +83,7 @@
          toast.error("Erro ao guardar estruturas");
          setSyncStatus("error");
        } else if (onWorkspaceUpdate) {
-         onWorkspaceUpdate({ ...workspace, data: newData as unknown as Json });
+         onWorkspaceUpdate({ ...workspace, data: validationResult.data as unknown as Json });
          setSyncStatus("saved");
          savedTimeoutRef.current = setTimeout(() => {
            setSyncStatus("idle");

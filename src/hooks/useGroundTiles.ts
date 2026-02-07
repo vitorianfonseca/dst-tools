@@ -4,19 +4,13 @@
  import { supabase } from "@/integrations/supabase/client";
  import { toast } from "sonner";
  import { Json } from "@/integrations/supabase/types";
- 
- export interface PlacedGroundTile {
-   id: string;
-   tile: GroundTile;
-   gridX: number;
-   gridY: number;
-   isNew?: boolean;
- }
- 
- interface WorkspaceData {
-   structures?: unknown[];
-   groundTiles?: PlacedGroundTile[];
- }
+ import { 
+  validateWorkspaceData, 
+  WorkspaceDataSchema,
+  type PlacedGroundTile 
+} from "@/schemas/workspace";
+
+export type { PlacedGroundTile };
  
  export type SyncStatus = "idle" | "saving" | "saved" | "error";
  
@@ -40,8 +34,16 @@
      }
  
      lastWorkspaceIdRef.current = workspace.id;
-     const data = workspace.data as WorkspaceData | null;
-     setGroundTiles(data?.groundTiles || []);
+     
+     // Validate workspace data
+     const validationResult = validateWorkspaceData(workspace.data);
+     
+     if (!validationResult.success) {
+       console.error("Invalid workspace data:", validationResult.error);
+       toast.error("Os dados do workspace estão corrompidos. Um workspace vazio será carregado.");
+     }
+     
+     setGroundTiles(validationResult.data.groundTiles || []);
    }, [workspace]);
  
    // Save tiles to database (debounced)
@@ -58,26 +60,39 @@
      setSyncStatus("saving");
  
      saveTimeoutRef.current = setTimeout(async () => {
-       const existingData = (workspace.data as WorkspaceData) || {};
-       const newData: WorkspaceData = { ...existingData, groundTiles: tiles };
-       
-       const { error } = await supabase
-         .from("workspaces")
-         .update({ data: newData as unknown as Json })
-         .eq("id", workspace.id);
- 
-       if (error) {
-         console.error("Error saving ground tiles:", error);
-         toast.error("Erro ao guardar tiles");
-         setSyncStatus("error");
-       } else if (onWorkspaceUpdate) {
-         onWorkspaceUpdate({ ...workspace, data: newData as unknown as Json });
-         setSyncStatus("saved");
-         savedTimeoutRef.current = setTimeout(() => {
-           setSyncStatus("idle");
-         }, 2000);
-       }
-     }, 500);
+        // Validate existing data first
+        const validationResult = validateWorkspaceData(workspace.data);
+        const existingData = validationResult.data;
+        
+        const newData = { ...existingData, groundTiles: tiles };
+        
+        // Validate new data before saving
+        const newValidationResult = WorkspaceDataSchema.safeParse(newData);
+        
+        if (!newValidationResult.success) {
+          console.error("Invalid data to save:", newValidationResult.error);
+          toast.error("Os dados são inválidos e não podem ser guardados");
+          setSyncStatus("error");
+          return;
+        }
+        
+        const { error } = await supabase
+          .from("workspaces")
+          .update({ data: newValidationResult.data as unknown as Json })
+          .eq("id", workspace.id);
+  
+        if (error) {
+          console.error("Error saving ground tiles:", error);
+          toast.error("Erro ao guardar tiles");
+          setSyncStatus("error");
+        } else if (onWorkspaceUpdate) {
+          onWorkspaceUpdate({ ...workspace, data: newValidationResult.data as unknown as Json });
+          setSyncStatus("saved");
+          savedTimeoutRef.current = setTimeout(() => {
+            setSyncStatus("idle");
+          }, 2000);
+        }
+      }, 500);
    }, [workspace, onWorkspaceUpdate]);
  
    const addTile = useCallback((tile: GroundTile, gridX: number, gridY: number) => {
