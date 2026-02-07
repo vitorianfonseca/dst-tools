@@ -20,10 +20,12 @@ describe("Structures Data", () => {
       
       categoryStructures.forEach((structure) => {
         const emoji = structure.icon;
-        if (!emojiMap.has(emoji)) {
-          emojiMap.set(emoji, []);
+        const existingStructures = emojiMap.get(emoji);
+        if (existingStructures) {
+          existingStructures.push(structure.name);
+        } else {
+          emojiMap.set(emoji, [structure.name]);
         }
-        emojiMap.get(emoji)!.push(structure.name);
       });
       
       // Find emojis used by multiple structures

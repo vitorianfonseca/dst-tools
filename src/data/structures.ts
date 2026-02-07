@@ -303,7 +303,7 @@ export const structures: Structure[] = [
     name: "Mushroom Light (Bloom)",
     category: "light",
     description: "Bright fungal lighting",
-    icon: "🍄‍🟫",
+    icon: "💡",
     iconImage: getStructureImage("mushroom-light-bloom"),
     materials: [
       { name: "Rope", amount: 1 },
