@@ -162,7 +162,7 @@ export default function Profile() {
      if (error) {
        toast.error("Error canceling request");
      } else {
-       toast.success("Pedido cancelado");
+       toast.success("Request canceled");
      }
    };
  
@@ -171,7 +171,7 @@ export default function Profile() {
      if (error) {
        toast.error("Error removing friend");
      } else {
-       toast.success("Amigo removido");
+       toast.success("Friend removed");
      }
    };
  
@@ -222,7 +222,7 @@ export default function Profile() {
                <div className="flex items-start justify-between gap-4">
                  <div>
                    <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-2" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
-                     {profile?.display_name || "Utilizador"}
+                     {profile?.display_name || "User"}
                    </h1>
                    <p className="text-lg text-white/70">{profile?.bio || "No description"}</p>
                  </div>
@@ -271,7 +271,7 @@ export default function Profile() {
              <div className="bg-black/40 border border-white/10 rounded-lg p-8">
                <div className="mb-6">
                  <h2 className="text-2xl font-black uppercase tracking-tight mb-2" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>Os teus Workspaces</h2>
-                 <p className="text-white/60">Gere os teus planos de base e a sua visibilidade</p>
+                 <p className="text-white/60">Manage your base plans and their visibility</p>
                </div>
                  {workspacesLoading ? (
                    <div className="text-center py-12 text-white/60">Loading...</div>

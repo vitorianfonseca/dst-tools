@@ -151,7 +151,7 @@ async function getCroppedImg(
       const dataUrl = await blobToDataUrl(croppedBlob);
       setPreview(dataUrl);
       onUpload(dataUrl);
-       toast.success("Imagem carregada com sucesso!");
+       toast.success("Image uploaded successfully!");
      } catch (error) {
        console.error("Upload error:", error);
        toast.error("Error loading image");
@@ -179,7 +179,7 @@ async function getCroppedImg(
     <Dialog open={showCropDialog} onOpenChange={setShowCropDialog}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Recortar imagem</DialogTitle>
+          <DialogTitle>Crop image</DialogTitle>
           <DialogDescription>
             Adjust the area of the image you want to use as {type === "avatar" ? "avatar" : "banner"}
           </DialogDescription>

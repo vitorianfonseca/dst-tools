@@ -188,7 +188,7 @@ const Index = () => {
     if (error) {
       toast.error("Error duplicating base");
     } else if (data) {
-      toast.success("Base duplicada com sucesso!");
+      toast.success("Base duplicated successfully!");
       handleWorkspaceChange(data);
     }
   };

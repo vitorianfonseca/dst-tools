@@ -98,7 +98,7 @@
      setTogglingVisibility(null);
      
      if (error) {
-       toast.error("Erro ao alterar visibilidade");
+       toast.error("Error changing visibility");
      } else {
        toast.success(newVisibility === "public" ? "Base is now public" : "Base is now private");
        if (currentWorkspace?.id === workspace.id) {
