@@ -1,9 +1,8 @@
- import { useState, useCallback, useEffect, useRef } from "react";
- import { GroundTile } from "@/data/groundTiles";
- import { Workspace } from "@/hooks/useWorkspaces";
- import { supabase } from "@/integrations/supabase/client";
- import { toast } from "sonner";
- import { Json } from "@/integrations/supabase/types";
+import { useState, useCallback, useEffect, useRef } from "react";
+import { GroundTile } from "@/data/groundTiles";
+import { Workspace } from "@/hooks/useWorkspaces";
+import { updateWorkspaceData, type Json } from "@/lib/localData";
+import { toast } from "sonner";
  
  export interface PlacedGroundTile {
    id: string;
@@ -60,23 +59,22 @@
      saveTimeoutRef.current = setTimeout(async () => {
        const existingData = (workspace.data as WorkspaceData) || {};
        const newData: WorkspaceData = { ...existingData, groundTiles: tiles };
-       
-       const { error } = await supabase
-         .from("workspaces")
-         .update({ data: newData as unknown as Json })
-         .eq("id", workspace.id);
- 
-       if (error) {
-         console.error("Error saving ground tiles:", error);
-         toast.error("Erro ao guardar tiles");
-         setSyncStatus("error");
-       } else if (onWorkspaceUpdate) {
-         onWorkspaceUpdate({ ...workspace, data: newData as unknown as Json });
-         setSyncStatus("saved");
-         savedTimeoutRef.current = setTimeout(() => {
-           setSyncStatus("idle");
-         }, 2000);
-       }
+
+      const updatedWorkspace = updateWorkspaceData(workspace.id, newData as unknown as Json);
+
+      if (!updatedWorkspace) {
+        toast.error("Erro ao guardar tiles");
+        setSyncStatus("error");
+        return;
+      }
+
+      if (onWorkspaceUpdate) {
+        onWorkspaceUpdate({ ...workspace, data: newData as unknown as Json });
+      }
+      setSyncStatus("saved");
+      savedTimeoutRef.current = setTimeout(() => {
+        setSyncStatus("idle");
+      }, 2000);
      }, 500);
    }, [workspace, onWorkspaceUpdate]);
  
