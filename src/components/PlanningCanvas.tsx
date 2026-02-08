@@ -339,12 +339,13 @@ export function PlanningCanvas({
 
     // Panning
     if (isPanning && panStartRef.current) {
-      const dx = e.clientX - panStartRef.current.screenX;
-      const dy = e.clientY - panStartRef.current.screenY;
+      const panStart = panStartRef.current; // Cache the ref value to avoid null reference
+      const dx = e.clientX - panStart.screenX;
+      const dy = e.clientY - panStart.screenY;
       setCamera((prev) => ({
         ...prev,
-        x: panStartRef.current!.camX - dx / prev.zoom,
-        y: panStartRef.current!.camY - dy / prev.zoom,
+        x: panStart.camX - dx / prev.zoom,
+        y: panStart.camY - dy / prev.zoom,
       }));
       return;
     }
@@ -672,9 +673,8 @@ export function PlanningCanvas({
                 e.stopPropagation();
                 onToggleBuilt(hoveredStructure.id);
               }}
-              className={`h-5 w-5 rounded-full flex items-center justify-center text-white transition-colors ${
-                hoveredStructure.built ? "bg-primary" : "bg-muted-foreground hover:bg-primary"
-              }`}
+              className={`h-5 w-5 rounded-full flex items-center justify-center text-white transition-colors ${hoveredStructure.built ? "bg-primary" : "bg-muted-foreground hover:bg-primary"
+                }`}
               title={hoveredStructure.built ? "Mark as not built" : "Mark as built"}
             >
               <Check className="h-3 w-3" />

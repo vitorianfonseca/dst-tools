@@ -131,6 +131,7 @@ export const CanvasEditor: React.FC<CanvasEditorProps> = ({
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
+      e.preventDefault();
       const canvas = canvasRef.current;
       if (!canvas) return;
 
@@ -158,8 +159,8 @@ export const CanvasEditor: React.FC<CanvasEditorProps> = ({
         screenStart: screenPos,
         selectedObjects: workspace.selectedIds.has(targetObj?.id || '')
           ? Array.from(workspace.selectedIds)
-              .map((id) => workspace.objects.get(id))
-              .filter((obj): obj is PlaceableObject => !!obj)
+            .map((id) => workspace.objects.get(id))
+            .filter((obj): obj is PlaceableObject => !!obj)
           : targetObj
             ? [targetObj]
             : [],
@@ -202,6 +203,7 @@ export const CanvasEditor: React.FC<CanvasEditorProps> = ({
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
+      e.preventDefault();
       const canvas = canvasRef.current;
       if (!canvas) return;
 
@@ -273,6 +275,7 @@ export const CanvasEditor: React.FC<CanvasEditorProps> = ({
 
   const handleMouseUp = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
+      e.preventDefault();
       if (!inputState.drag) return;
 
       const { isDragging, selectedObjects } = inputState.drag;
@@ -354,14 +357,40 @@ export const CanvasEditor: React.FC<CanvasEditorProps> = ({
       }
     };
 
+    const handleDragStart = (e: DragEvent) => {
+      e.preventDefault();
+      return false;
+    };
+
+    const handleDragOver = (e: DragEvent) => {
+      e.preventDefault();
+      return false;
+    };
+
+    const handleDrop = (e: DragEvent) => {
+      e.preventDefault();
+      return false;
+    };
+
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.addEventListener('dragstart', handleDragStart);
+      canvas.addEventListener('dragover', handleDragOver);
+      canvas.addEventListener('drop', handleDrop);
+    }
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      if (canvas) {
+        canvas.removeEventListener('dragstart', handleDragStart);
+        canvas.removeEventListener('dragover', handleDragOver);
+        canvas.removeEventListener('drop', handleDrop);
+      }
     };
-  }, []);
+  }, [canvasRef]);
 
   return (
     <canvas
@@ -376,7 +405,11 @@ export const CanvasEditor: React.FC<CanvasEditorProps> = ({
         border: '1px solid #ccc',
         cursor: inputState.drag?.isDragging ? 'grabbing' : 'grab',
         display: 'block',
-      }}
+        userSelect: 'none',
+        touchAction: 'none',
+        backgroundColor: '#f5f5f5',
+        WebkitUserDrag: 'none',
+      } as React.CSSProperties}
     />
   );
 };
