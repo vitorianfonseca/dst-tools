@@ -1,7 +1,5 @@
-import { getTileMapping } from "./tileMappings";
-
 const materialImages = import.meta.glob<string>(
-  "@/assets/dst-assets/items/splited/item_set2/*.png",
+  "@/assets/materials/*.png",
   { eager: true, query: "?url", import: "default" }
 );
 
@@ -18,14 +16,14 @@ export const materials: Record<string, Material> = {
   "Rocks": { name: "Rocks" },
   "Flint": { name: "Flint" },
   "Gold Nugget": { name: "Gold Nugget" },
-  
+
   // Refined Materials
   "Boards": { name: "Boards" },
   "Cut Stone": { name: "Cut Stone" },
   "Rope": { name: "Rope" },
   "Papyrus": { name: "Papyrus" },
   "Charcoal": { name: "Charcoal" },
-  
+
   // Special Items
   "Electrical Doodad": { name: "Electrical Doodad" },
   "Gears": { name: "Gears" },
@@ -34,12 +32,12 @@ export const materials: Record<string, Material> = {
   "Purple Gem": { name: "Purple Gem" },
   "Red Gem": { name: "Red Gem" },
   "Blue Gem": { name: "Blue Gem" },
-  
+
   // Farm & Food
   "Manure": { name: "Manure" },
   "Rot": { name: "Rot" },
   "Seeds": { name: "Seeds" },
-  
+
   // Other
   "Silk": { name: "Silk" },
   "Spider Gland": { name: "Spider Gland" },
@@ -48,11 +46,11 @@ export const materials: Record<string, Material> = {
   "Stinger": { name: "Stinger" },
   "Honeycomb": { name: "Honeycomb" },
   "Beeswax": { name: "Beeswax" },
-  
+
   // Lunar
   "Moon Rock": { name: "Moon Rock" },
   "Pure Horror": { name: "Pure Horror" },
-  
+
   // Animals & Special
   "Rabbit": { name: "Rabbit" },
   "Top Hat": { name: "Top Hat" },
@@ -63,13 +61,7 @@ export const materials: Record<string, Material> = {
 };
 
 export function getMaterialImage(materialName: string): string | undefined {
-  const lowerName = materialName.toLowerCase().replace(/\s+/g, "-");
-  const tileFile = getTileMapping(lowerName);
-  
-  if (tileFile) {
-    const key = `/src/assets/dst-assets/items/splited/item_set2/${tileFile}`;
-    return materialImages[key];
-  }
-
-  return undefined;
+  const id = materialName.toLowerCase().replace(/\s+/g, "-");
+  const key = `/src/assets/materials/${id}.png`;
+  return materialImages[key];
 }
