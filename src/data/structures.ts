@@ -3,7 +3,7 @@ import { getStructureImage } from "./structureImages";
 export interface Structure {
   id: string;
   name: string;
-  category: "science" | "food" | "light" | "survival" | "refining" | "structures" | "farming" | "magic";
+  category: "science" | "food" | "light" | "survival" | "structures" | "farming" | "magic";
   description: string;
   icon: string;
   iconImage?: string;
@@ -353,19 +353,6 @@ export const structures: Structure[] = [
     ],
   },
   {
-    id: "ice-flingomatic",
-    name: "Ice Flingomatic",
-    category: "structures",
-    description: "Extinguishes fires and chills",
-    icon: "🧯",
-    iconImage: getStructureImage("ice-flingomatic"),
-    materials: [
-      { name: "Gears", amount: 2 },
-      { name: "Ice", amount: 15 },
-      { name: "Electrical Doodad", amount: 2 },
-    ],
-  },
-  {
     id: "rainometer",
     name: "Rainometer",
     category: "survival",
@@ -376,20 +363,6 @@ export const structures: Structure[] = [
       { name: "Boards", amount: 1 },
       { name: "Gold Nugget", amount: 2 },
       { name: "Rope", amount: 1 },
-    ],
-  },
-
-  // REFINING
-  {
-    id: "cartographer-sign",
-    name: "Directional Sign",
-    category: "structures",
-    description: "Marks points of interest",
-    icon: "🧭",
-    iconImage: getStructureImage("directional-sign"),
-    materials: [
-      { name: "Boards", amount: 2 },
-      { name: "Charcoal", amount: 2 },
     ],
   },
 
@@ -610,6 +583,31 @@ export const structures: Structure[] = [
       { name: "Papyrus", amount: 1 },
     ],
   },
+  {
+    id: "ice-flingomatic",
+    name: "Ice Flingomatic",
+    category: "structures",
+    description: "Extinguishes fires and chills",
+    icon: "🧯",
+    iconImage: getStructureImage("ice-flingomatic"),
+    materials: [
+      { name: "Gears", amount: 2 },
+      { name: "Ice", amount: 15 },
+      { name: "Electrical Doodad", amount: 2 },
+    ],
+  },
+  {
+    id: "cartographer-sign",
+    name: "Directional Sign",
+    category: "structures",
+    description: "Marks points of interest",
+    icon: "🧭",
+    iconImage: getStructureImage("directional-sign"),
+    materials: [
+      { name: "Boards", amount: 2 },
+      { name: "Charcoal", amount: 2 },
+    ],
+  },
 
   // FARMING
   {
@@ -722,7 +720,6 @@ export const categories = [
   { id: "food", label: "Food", icon: "🍲" },
   { id: "light", label: "Light", icon: "🔥" },
   { id: "survival", label: "Survival", icon: "⛺" },
-  { id: "refining", label: "Refining", icon: "⚒️" },
   { id: "structures", label: "Structures", icon: "🧱" },
   { id: "farming", label: "Farming", icon: "🌾" },
   { id: "magic", label: "Magic", icon: "🌑" },
