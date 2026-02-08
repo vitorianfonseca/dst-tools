@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faScrewdriverWrench } from "@fortawesome/free-solid-svg-icons";
 import { Users, Search, BookOpen, ArrowRight, MapPin, Sparkles, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import heroImage from "@/assets/1.png";
 
 export default function Landing() {
   const { user } = useAuth();
@@ -151,7 +152,7 @@ export default function Landing() {
             {/* Right side - Featured Image */}
             <div className="relative lg:h-[600px] h-[450px] flex items-center justify-center">
               <img
-                src="/src/assets/1.png"
+                src={heroImage}
                 alt="Don't Starve Together"
                 className="w-full h-full object-contain drop-shadow-2xl"
               />
