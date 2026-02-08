@@ -50,7 +50,7 @@ export default function Community() {
             </h1>
           </div>
           <p className="text-xl text-white/70 max-w-3xl">
-            Explora bases criadas por outros jogadores. Inspira-te e descobre novas ideias para os teus projetos.
+            Explore bases created by other players. Get inspired and discover new ideas for your projects.
           </p>
         </div>
       </div>

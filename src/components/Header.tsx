@@ -59,7 +59,7 @@ export function Header({
            <>
              <Badge variant="secondary" className="gap-1.5 text-xs">
                <Eye className="h-3 w-3" />
-               Visualização {ownerName ? `• ${ownerName}` : ""}
+               View Only {ownerName ? `• ${ownerName}` : ""}
              </Badge>
              {onDuplicate && (
                <Button
@@ -87,7 +87,7 @@ export function Header({
                 className="h-8 w-8"
                 onClick={onUndo}
                 disabled={!canUndo}
-                title="Desfazer (Ctrl+Z)"
+                title="Undo (Ctrl+Z)"
               >
                 <Undo2 className="h-4 w-4" />
               </Button>
@@ -97,7 +97,7 @@ export function Header({
                 className="h-8 w-8"
                 onClick={onRedo}
                 disabled={!canRedo}
-                title="Refazer (Ctrl+Shift+Z)"
+                title="Redo (Ctrl+Shift+Z)"
               >
                 <Redo2 className="h-4 w-4" />
               </Button>

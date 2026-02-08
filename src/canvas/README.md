@@ -414,7 +414,7 @@ console.log(JSON.parse(json));
 
 ### Próximos Passos
 1. Implementar undo/redo completo
-2. Carregar imagens de assets (em `src/assets/dst-assets/`)
+2. Carregar imagens de assets (em `src/assets/`)
 3. Adicionar editor visual de raio funcional
 4. Implements resize/rotate handles
 5. Testar com 200+ objetos e otimizar se necessário

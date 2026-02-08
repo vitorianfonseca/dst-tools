@@ -1,4 +1,7 @@
-import { getTileMapping } from "./tileMappings";
+const materialImages = import.meta.glob<string>(
+  "@/assets/materials/*.png",
+  { eager: true, query: "?url", import: "default" }
+);
 
 export interface Material {
   name: string;
@@ -13,14 +16,14 @@ export const materials: Record<string, Material> = {
   "Rocks": { name: "Rocks" },
   "Flint": { name: "Flint" },
   "Gold Nugget": { name: "Gold Nugget" },
-  
+
   // Refined Materials
   "Boards": { name: "Boards" },
   "Cut Stone": { name: "Cut Stone" },
   "Rope": { name: "Rope" },
   "Papyrus": { name: "Papyrus" },
   "Charcoal": { name: "Charcoal" },
-  
+
   // Special Items
   "Electrical Doodad": { name: "Electrical Doodad" },
   "Gears": { name: "Gears" },
@@ -29,12 +32,15 @@ export const materials: Record<string, Material> = {
   "Purple Gem": { name: "Purple Gem" },
   "Red Gem": { name: "Red Gem" },
   "Blue Gem": { name: "Blue Gem" },
-  
+  "Marble": { name: "Marble" },
+
   // Farm & Food
   "Manure": { name: "Manure" },
   "Rot": { name: "Rot" },
   "Seeds": { name: "Seeds" },
-  
+  "Carrot": { name: "Carrot" },
+  "Fertilizer": { name: "Fertilizer" },
+
   // Other
   "Silk": { name: "Silk" },
   "Spider Gland": { name: "Spider Gland" },
@@ -43,11 +49,18 @@ export const materials: Record<string, Material> = {
   "Stinger": { name: "Stinger" },
   "Honeycomb": { name: "Honeycomb" },
   "Beeswax": { name: "Beeswax" },
-  
-  // Lunar
+  "Hound Tooth": { name: "Hound Tooth" },
+  "Dragonfly Scales": { name: "Dragonfly Scales" },
+  "Shroom Skin": { name: "Shroom Skin" },
+  "Seashell": { name: "Seashell" },
+  "Ice": { name: "Ice" },
+  "Salt": { name: "Salt" },
+
+  // Lunar & Ancient
   "Moon Rock": { name: "Moon Rock" },
   "Pure Horror": { name: "Pure Horror" },
-  
+  "Thulecite": { name: "Thulecite" },
+
   // Animals & Special
   "Rabbit": { name: "Rabbit" },
   "Top Hat": { name: "Top Hat" },
@@ -58,12 +71,7 @@ export const materials: Record<string, Material> = {
 };
 
 export function getMaterialImage(materialName: string): string | undefined {
-  const lowerName = materialName.toLowerCase().replace(/\s+/g, "-");
-  const tileFile = getTileMapping(lowerName);
-  
-  if (tileFile) {
-    return `/src/assets/dst-assets/items/splited/item_set2/${tileFile}`;
-  }
-
-  return undefined;
+  const id = materialName.toLowerCase().replace(/\s+/g, "-");
+  const key = `/src/assets/materials/${id}.png`;
+  return materialImages[key];
 }

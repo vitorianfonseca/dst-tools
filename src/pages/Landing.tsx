@@ -1,15 +1,102 @@
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { UserMenu } from "@/components/UserMenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faScrewdriverWrench } from "@fortawesome/free-solid-svg-icons";
-import { Users, Search, BookOpen, ArrowRight, MapPin, Sparkles, Zap } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import {
+  Users, BookOpen, ArrowRight, MapPin, Calendar, Swords, Globe, Flame, Search,
+} from "lucide-react";
+import { getWorkspaces, getProfiles, type LocalWorkspace, type LocalProfile } from "@/lib/localData";
+import { PlacedStructure } from "@/hooks/usePlacedStructures";
+import heroImage from "@/assets/1.png";
+
+interface WorkspaceData {
+  structures?: PlacedStructure[];
+}
+
+const IMPACT_FONT = 'Impact, "Arial Black", sans-serif';
+
+const FEATURES = [
+  {
+    icon: MapPin,
+    title: "Base Planner",
+    description: "Drag & drop structures onto an infinite canvas. Plan your perfect base layout before building.",
+    link: "/planner",
+    live: true,
+  },
+  {
+    icon: Users,
+    title: "Community",
+    description: "Browse bases shared by other players. Get inspired and share your own creations.",
+    link: "/community",
+    live: true,
+  },
+  {
+    icon: BookOpen,
+    title: "Advanced Guides",
+    description: "Survival tips, boss strategies, seasons, and everything you need to not starve.",
+    link: "/guides",
+    live: true,
+  },
+  {
+    icon: Calendar,
+    title: "Season Planner",
+    description: "Plan your survival strategy season by season. Never get caught unprepared again.",
+    link: "/planner",
+    live: false,
+  },
+  {
+    icon: Swords,
+    title: "Character Database",
+    description: "Every character's perks, stats, and recommended strategies in one place.",
+    link: "/guides",
+    live: false,
+  },
+];
+
+const NAV_TABS = [
+  { label: "Ferramentas", path: "/planner" },
+  { label: "Comunidade", path: "/community" },
+  { label: "Guias Avancados", path: "/guides" },
+];
 
 export default function Landing() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [publicWorkspaces, setPublicWorkspaces] = useState<(LocalWorkspace & { owner?: LocalProfile })[]>([]);
+
+  useEffect(() => {
+    const profiles = getProfiles();
+    const profileMap = new Map(profiles.map((p) => [p.id, p]));
+    const workspaces = getWorkspaces()
+      .filter((w) => w.visibility === "public")
+      .sort((a, b) => b.updated_at.localeCompare(a.updated_at))
+      .slice(0, 6);
+    setPublicWorkspaces(workspaces.map((w) => ({ ...w, owner: profileMap.get(w.user_id) })));
+  }, []);
+
+  const communityStats = useMemo(() => {
+    const allWorkspaces = getWorkspaces();
+    const publicCount = allWorkspaces.filter((w) => w.visibility === "public").length;
+    const creators = new Set(allWorkspaces.map((w) => w.user_id)).size;
+    let totalStructures = 0;
+    for (const w of allWorkspaces) {
+      const data = w.data as WorkspaceData | null;
+      totalStructures += data?.structures?.length ?? 0;
+    }
+    return { publicCount, creators, totalStructures };
+  }, []);
+
+  const getStructureCount = (workspace: LocalWorkspace) => {
+    const data = workspace.data as WorkspaceData | null;
+    return data?.structures?.length ?? 0;
+  };
 
   return (
     <div className="min-h-screen bg-[#1a1410] text-white">
@@ -24,51 +111,48 @@ export default function Landing() {
             />
             <span
               className="text-lg font-black uppercase tracking-tight"
-              style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
+              style={{ fontFamily: IMPACT_FONT }}
             >
               DST Tools
             </span>
           </Link>
 
           <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-1 rounded-full border border-white/10 bg-black/40 p-1 shadow-[0_0_20px_rgba(212,130,59,0.12)]">
-              <Button
-                onClick={() => navigate("/planner")}
-                variant="ghost"
-                className="relative rounded-full px-4 py-2 text-sm font-semibold uppercase tracking-wide text-white/80 hover:text-white hover:bg-[#d4823b] transition-colors"
-                size="sm"
-              >
-                <span className="absolute inset-0 rounded-full bg-gradient-to-r from-[#d4823b]/20 to-transparent opacity-0 transition-opacity duration-300 hover:opacity-100" />
-                <span className="relative">Ferramentas</span>
-              </Button>
-              <Button
-                onClick={() => navigate("/community")}
-                variant="ghost"
-                className="relative rounded-full px-4 py-2 text-sm font-semibold uppercase tracking-wide text-white/80 hover:text-white hover:bg-[#d4823b] transition-colors"
-                size="sm"
-              >
-                <span className="absolute inset-0 rounded-full bg-gradient-to-r from-[#d4823b]/20 to-transparent opacity-0 transition-opacity duration-300 hover:opacity-100" />
-                <span className="relative">Comunidade</span>
-              </Button>
-              <Button
-                onClick={() => navigate("/guides")}
-                variant="ghost"
-                className="relative rounded-full px-4 py-2 text-sm font-semibold uppercase tracking-wide text-white/80 hover:text-white hover:bg-[#d4823b] transition-colors"
-                size="sm"
-              >
-                <span className="absolute inset-0 rounded-full bg-gradient-to-r from-[#d4823b]/20 to-transparent opacity-0 transition-opacity duration-300 hover:opacity-100" />
-                <span className="relative">Guias Avancados</span>
-              </Button>
+            <div
+              className="hidden md:flex items-center gap-1 rounded-full border border-white/10 bg-black/40 p-1 shadow-[0_0_20px_rgba(212,130,59,0.12)]"
+              onMouseLeave={() => setActiveTab(null)}
+            >
+              {NAV_TABS.map((tab) => (
+                <button
+                  key={tab.label}
+                  onClick={() => {
+                    setActiveTab(tab.label);
+                    navigate(tab.path);
+                  }}
+                  onMouseEnter={() => setActiveTab(tab.label)}
+                  className="relative rounded-full px-4 py-2 text-sm font-semibold uppercase tracking-wide text-white/80 hover:text-white transition-colors duration-200"
+                >
+                  {activeTab === tab.label && (
+                    <motion.span
+                      layoutId="nav-pill"
+                      className="absolute inset-0 rounded-full bg-[#d4823b]"
+                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">{tab.label}</span>
+                </button>
+              ))}
             </div>
 
-            <div className="relative w-[220px]">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#d4823b]/20 to-transparent blur-sm" />
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/50" />
+            <div className="relative w-[200px] hidden lg:block">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
               <Input
                 placeholder="Pesquisar"
-                className="relative pl-9 h-9 bg-black/60 border-white/20 text-white placeholder:text-white/40 rounded-full focus:border-[#d4823b]/60 focus:ring-[#d4823b]/20"
+                className="pl-9 h-9 bg-white/5 border-white/8 text-white placeholder:text-white/35 rounded-full backdrop-blur-xl focus:border-white/20 focus:ring-white/10"
               />
             </div>
+
+            <UserMenu />
           </div>
         </div>
       </nav>
@@ -80,15 +164,15 @@ export default function Landing() {
             {/* Left side - Content */}
             <div className="space-y-8">
               <div className="space-y-4">
-                <h1 className="text-6xl sm:text-7xl md:text-8xl font-black leading-none tracking-tighter uppercase flex flex-wrap items-baseline gap-4" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
+                <h1 className="text-6xl sm:text-7xl md:text-8xl font-black leading-none tracking-tighter uppercase flex flex-wrap items-baseline gap-4" style={{ fontFamily: IMPACT_FONT }}>
                   <span className="text-white">DST</span>
                   <span className="text-[#d4823b]">TOOLS</span>
                 </h1>
               </div>
 
               <p className="text-lg sm:text-xl text-white/80 leading-relaxed max-w-xl">
-                Uma suite de ferramentas para Don't Starve Together. Planeia bases,
-                pesquisa conteúdos e partilha conhecimentos com a comunidade.
+                Plan your Don't Starve Together base like a pro. Track resources,
+                share builds, and survive together.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
@@ -99,15 +183,15 @@ export default function Landing() {
                       size="lg"
                       className="bg-[#d4823b] hover:bg-[#b56f2f] text-white border-none gap-2 text-lg h-14 px-8 font-bold uppercase tracking-wide"
                     >
-                      Abrir Ferramenta
+                      Start Planning
                     </Button>
                     <Button
                       onClick={() => navigate("/community")}
                       variant="outline"
                       size="lg"
-                      className="border-white/30 bg-transparent text-white hover:bg-white/10 gap-2 text-lg h-14 px-8 font-bold uppercase tracking-wide"
+                      className="border-white/30 bg-transparent text-white hover:bg-white/20 hover:text-white hover:border-white/50 gap-2 text-lg h-14 px-8 font-bold uppercase tracking-wide"
                     >
-                      Comunidade
+                      Browse Community
                     </Button>
                   </>
                 ) : (
@@ -117,15 +201,15 @@ export default function Landing() {
                       size="lg"
                       className="bg-[#d4823b] hover:bg-[#b56f2f] text-white border-none gap-2 text-lg h-14 px-8 font-bold uppercase tracking-wide"
                     >
-                      Começar Grátis
+                      Get Started Free
                     </Button>
                     <Button
                       onClick={() => navigate("/community")}
                       variant="outline"
                       size="lg"
-                      className="border-white/30 bg-transparent text-white hover:bg-white/10 gap-2 text-lg h-14 px-8 font-bold uppercase tracking-wide"
+                      className="border-white/30 bg-transparent text-white hover:bg-white/20 hover:text-white hover:border-white/50 gap-2 text-lg h-14 px-8 font-bold uppercase tracking-wide"
                     >
-                      Ver Exemplos
+                      Browse Community
                     </Button>
                   </>
                 )}
@@ -135,15 +219,15 @@ export default function Landing() {
               <div className="flex gap-8 pt-6">
                 <div>
                   <p className="text-3xl font-bold text-[#d4823b]">60+</p>
-                  <p className="text-sm text-white/60 uppercase tracking-wide">Estruturas</p>
+                  <p className="text-sm text-white/60 uppercase tracking-wide">Structures</p>
                 </div>
                 <div>
                   <p className="text-3xl font-bold text-[#d4823b]">40+</p>
-                  <p className="text-sm text-white/60 uppercase tracking-wide">Materiais</p>
+                  <p className="text-sm text-white/60 uppercase tracking-wide">Materials</p>
                 </div>
                 <div>
                   <p className="text-3xl font-bold text-[#d4823b]">100%</p>
-                  <p className="text-sm text-white/60 uppercase tracking-wide">Grátis</p>
+                  <p className="text-sm text-white/60 uppercase tracking-wide">Free</p>
                 </div>
               </div>
             </div>
@@ -151,102 +235,169 @@ export default function Landing() {
             {/* Right side - Featured Image */}
             <div className="relative lg:h-[600px] h-[450px] flex items-center justify-center">
               <img
-                src="/src/assets/1.png"
+                src={heroImage}
                 alt="Don't Starve Together"
                 className="w-full h-full object-contain drop-shadow-2xl"
               />
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Top Tools */}
-          <div className="mt-14">
-            <div className="flex items-center justify-between gap-6 mb-6 flex-wrap">
-              <h2
-                className="text-2xl sm:text-3xl font-black uppercase tracking-tighter"
-                style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
+      {/* Feature Showcase */}
+      <section className="py-20 px-8 bg-black/20">
+        <div className="max-w-[1200px] mx-auto">
+          <div className="text-center mb-14">
+            <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4" style={{ fontFamily: IMPACT_FONT }}>
+              Everything You Need to Survive
+            </h2>
+            <p className="text-xl text-white/60 max-w-2xl mx-auto">
+              A complete toolkit built by DST players, for DST players.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {FEATURES.map((feature) => (
+              <div
+                key={feature.title}
+                onClick={() => navigate(feature.link)}
+                className={`group relative p-7 bg-black/40 hover:bg-black/60 transition-all border border-white/10 hover:border-[#d4823b]/50 cursor-pointer hover:shadow-[0_0_30px_rgba(212,130,59,0.1)] ${
+                  !feature.live ? "opacity-60" : ""
+                }`}
               >
-                Ferramentas Principais
-              </h2>
-              <p className="text-white/60">As 3 funcionalidades core do DST Tools</p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-4">
-              <div className="group p-6 bg-black/40 hover:bg-black/60 transition-all border border-white/10 hover:border-[#d4823b]/50">
-                <div className="mb-3">
-                  <Users className="h-6 w-6 text-[#d4823b]" />
+                {!feature.live && (
+                  <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-wider text-[#d4823b] bg-[#d4823b]/15 border border-[#d4823b]/30 px-2 py-0.5 rounded-full">
+                    Coming Soon
+                  </span>
+                )}
+                <div className="mb-4">
+                  <feature.icon className="h-8 w-8 text-[#d4823b]" />
                 </div>
-                <h3 className="text-lg font-bold mb-2 uppercase tracking-wide">Tab de Comunidade</h3>
+                <h3 className="text-xl font-bold mb-2 uppercase tracking-wide">{feature.title}</h3>
                 <p className="text-white/70 leading-relaxed text-sm">
-                  Descobre planos e partilha projetos com a comunidade.
+                  {feature.description}
                 </p>
-              </div>
-
-              <div className="group p-6 bg-black/40 hover:bg-black/60 transition-all border border-white/10 hover:border-[#d4823b]/50">
-                <div className="mb-3">
-                  <Search className="h-6 w-6 text-[#d4823b]" />
+                <div className="mt-4 flex items-center gap-1 text-sm text-[#d4823b] opacity-0 group-hover:opacity-100 transition-opacity">
+                  {feature.live ? "Open" : "Coming soon"}
+                  {feature.live && <ArrowRight className="h-4 w-4" />}
                 </div>
-                <h3 className="text-lg font-bold mb-2 uppercase tracking-wide">Search Bar</h3>
-                <p className="text-white/70 leading-relaxed text-sm">
-                  Pesquisa rapida por estruturas, materiais e conteudos.
-                </p>
               </div>
-
-              <div className="group p-6 bg-black/40 hover:bg-black/60 transition-all border border-white/10 hover:border-[#d4823b]/50">
-                <div className="mb-3">
-                  <BookOpen className="h-6 w-6 text-[#d4823b]" />
-                </div>
-                <h3 className="text-lg font-bold mb-2 uppercase tracking-wide">Guias Avancados</h3>
-                <p className="text-white/70 leading-relaxed text-sm">
-                  Sobrevivencia, personagens, bosses e estacoes num so lugar.
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Offerings Section */}
-      <section className="py-20 px-8 bg-black/20">
-        <div className="max-w-[1100px] mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
-              O Que o Site Oferece
-            </h2>
-            <p className="text-xl text-white/60">Planeamento, organizacao e performance para as tuas bases</p>
+      {/* Community Showcase */}
+      <section className="py-20 px-8">
+        <div className="max-w-[1200px] mx-auto">
+          <div className="flex items-center justify-between gap-6 mb-10 flex-wrap">
+            <div>
+              <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-3" style={{ fontFamily: IMPACT_FONT }}>
+                Featured Bases
+              </h2>
+              <p className="text-lg text-white/60">See what the community is building</p>
+            </div>
+            <Button
+              onClick={() => navigate("/community")}
+              variant="outline"
+              className="border-white/20 bg-transparent text-white hover:bg-white/10 gap-2 font-bold uppercase tracking-wide"
+            >
+              View All
+              <ArrowRight className="h-4 w-4" />
+            </Button>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Feature 1 */}
-            <div className="group p-8 bg-black/40 hover:bg-black/60 transition-all border border-white/10 hover:border-[#d4823b]/50">
-              <div className="mb-4">
-                <MapPin className="h-8 w-8 text-[#d4823b]" />
-              </div>
-              <h3 className="text-xl font-bold mb-3 uppercase tracking-wide">Planeamento Visual</h3>
-              <p className="text-white/70 leading-relaxed">
-                Cria layouts claros e organiza a tua base com precisao.
+          {publicWorkspaces.length === 0 ? (
+            <div className="text-center py-16 bg-black/30 border border-white/10">
+              <Globe className="h-12 w-12 text-[#d4823b]/50 mx-auto mb-4" />
+              <h3 className="text-xl font-bold mb-2">No Public Bases Yet</h3>
+              <p className="text-white/50 mb-6 max-w-md mx-auto">
+                Be the first to share your base with the community! Create a workspace and make it public.
               </p>
+              <Button
+                onClick={() => navigate("/planner")}
+                className="bg-[#d4823b] hover:bg-[#b56f2f] text-white font-bold uppercase"
+              >
+                Create Your Base
+              </Button>
             </div>
+          ) : (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {publicWorkspaces.map((workspace) => (
+                <div
+                  key={workspace.id}
+                  onClick={() => {
+                    localStorage.setItem("dst-planner-current-workspace", workspace.id);
+                    navigate("/planner");
+                  }}
+                  className="group bg-black/40 border border-white/10 hover:border-[#d4823b]/50 overflow-hidden transition-all hover:shadow-[0_0_30px_rgba(212,130,59,0.1)] cursor-pointer"
+                >
+                  {/* Preview header */}
+                  <div className="h-28 bg-gradient-to-br from-[#d4823b]/20 via-[#d4823b]/5 to-black/60 relative flex items-center justify-center">
+                    <div className="text-center">
+                      <p className="text-3xl font-black text-[#d4823b]/40" style={{ fontFamily: IMPACT_FONT }}>
+                        {getStructureCount(workspace)}
+                      </p>
+                      <p className="text-xs text-white/30 uppercase tracking-wider font-bold">structures</p>
+                    </div>
+                  </div>
 
-            {/* Feature 2 */}
-            <div className="group p-8 bg-black/40 hover:bg-black/60 transition-all border border-white/10 hover:border-[#d4823b]/50">
-              <div className="mb-4">
-                <Sparkles className="h-8 w-8 text-[#d4823b]" />
-              </div>
-              <h3 className="text-xl font-bold mb-3 uppercase tracking-wide">Organizacao Inteligente</h3>
-              <p className="text-white/70 leading-relaxed">
-                Mantem tudo categorizado para encontrares o que precisas.
-              </p>
+                  {/* Info */}
+                  <div className="p-5">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Avatar className="h-8 w-8 border-2 border-[#1a1410]">
+                        <AvatarImage src={workspace.owner?.avatar_url || undefined} />
+                        <AvatarFallback className="text-xs bg-[#d4823b] text-white font-black">
+                          {workspace.owner?.display_name?.[0]?.toUpperCase() || "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm text-white/60 truncate">
+                        {workspace.owner?.display_name || "Unknown"}
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-lg mb-1 truncate uppercase tracking-tight" style={{ fontFamily: IMPACT_FONT }}>
+                      {workspace.name}
+                    </h3>
+                    <p className="text-xs text-white/40">
+                      {new Date(workspace.updated_at).toLocaleDateString("pt-PT")}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
+          )}
+        </div>
+      </section>
 
-            {/* Feature 3 */}
-            <div className="group p-8 bg-black/40 hover:bg-black/60 transition-all border border-white/10 hover:border-[#d4823b]/50">
-              <div className="mb-4">
-                <Zap className="h-8 w-8 text-[#d4823b]" />
-              </div>
-              <h3 className="text-xl font-bold mb-3 uppercase tracking-wide">Experiencia Rapida</h3>
-              <p className="text-white/70 leading-relaxed">
-                Interface leve e fluida mesmo com projetos grandes.
+      {/* Social Proof */}
+      <section className="py-16 px-8 bg-black/20 border-y border-white/5">
+        <div className="max-w-[900px] mx-auto text-center">
+          <div className="flex items-center justify-center gap-2 mb-8">
+            <Flame className="h-5 w-5 text-[#d4823b]" />
+            <p className="text-lg text-white/60 uppercase tracking-widest font-semibold">
+              Made by DST players, for DST players
+            </p>
+            <Flame className="h-5 w-5 text-[#d4823b]" />
+          </div>
+
+          <div className="grid grid-cols-3 gap-8">
+            <div>
+              <p className="text-4xl md:text-5xl font-black text-[#d4823b] mb-2" style={{ fontFamily: IMPACT_FONT }}>
+                {communityStats.publicCount || "0"}
               </p>
+              <p className="text-sm text-white/50 uppercase tracking-wide font-bold">Public Bases</p>
+            </div>
+            <div>
+              <p className="text-4xl md:text-5xl font-black text-[#d4823b] mb-2" style={{ fontFamily: IMPACT_FONT }}>
+                {communityStats.creators || "0"}
+              </p>
+              <p className="text-sm text-white/50 uppercase tracking-wide font-bold">Creators</p>
+            </div>
+            <div>
+              <p className="text-4xl md:text-5xl font-black text-[#d4823b] mb-2" style={{ fontFamily: IMPACT_FONT }}>
+                {communityStats.totalStructures || "0"}
+              </p>
+              <p className="text-sm text-white/50 uppercase tracking-wide font-bold">Structures Placed</p>
             </div>
           </div>
         </div>
@@ -255,18 +406,18 @@ export default function Landing() {
       {/* CTA */}
       <section className="py-24 px-8">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter mb-6" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
-            Pronto para começar?
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter mb-6" style={{ fontFamily: IMPACT_FONT }}>
+            Ready to Plan Your Base?
           </h2>
           <p className="text-xl text-white/70 mb-10">
-            Cria a tua conta gratuita e começa a planear a base perfeita agora.
+            Join the community and start building the perfect base today.
           </p>
           <Button
             onClick={() => navigate(user ? "/planner" : "/auth")}
             size="lg"
             className="bg-[#d4823b] hover:bg-[#b56f2f] text-white border-none gap-2 text-lg h-14 px-10 font-bold uppercase tracking-wide"
           >
-            {user ? "Abrir App" : "Começar Grátis"}
+            {user ? "Start Planning" : "Get Started Free"}
             <ArrowRight className="h-5 w-5" />
           </Button>
         </div>
@@ -282,20 +433,20 @@ export default function Landing() {
                 className="h-5 w-5"
                 style={{ color: "#d4823b" }}
               />
-              <span>© 2026 DST Tools</span>
+              <span>&copy; 2026 DST Tools</span>
             </div>
             <div className="flex gap-6">
               <Link to="/community" className="hover:text-white transition-colors">
-                Comunidade
+                Community
               </Link>
               <Link to="/profile" className="hover:text-white transition-colors">
-                Perfil
+                Profile
               </Link>
             </div>
           </div>
           <div className="text-center text-xs text-white/40 pt-6 border-t border-white/5">
-            <p>Este projeto é uma ferramenta criada por fãs e não é afiliado oficialmente com Klei Entertainment.</p>
-            <p className="mt-1">Don't Starve Together e todos os assets relacionados são propriedade de Klei Entertainment Inc.</p>
+            <p>This project is a fan-made tool and is not officially affiliated with Klei Entertainment.</p>
+            <p className="mt-1">Don&apos;t Starve Together and all related assets are property of Klei Entertainment Inc.</p>
           </div>
         </div>
       </footer>
