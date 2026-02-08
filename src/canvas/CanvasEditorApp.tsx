@@ -26,7 +26,7 @@ export const CanvasEditorApp: React.FC<CanvasEditorAppProps> = ({
   const [canvasHeight] = useState(height - 60); // Toolbar height
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height, width }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', userSelect: 'none', touchAction: 'none' }}>
       {/* Toolbar */}
       <Toolbar />
 
@@ -36,7 +36,7 @@ export const CanvasEditorApp: React.FC<CanvasEditorAppProps> = ({
         {showLeftPanel && <LayerPanel />}
 
         {/* Canvas */}
-        <div style={{ flex: 1, overflow: 'hidden', backgroundColor: '#f5f5f5' }}>
+        <div style={{ flex: 1, overflow: 'hidden', backgroundColor: '#f5f5f5', position: 'relative' }}>
           <CanvasEditor width={canvasWidth} height={canvasHeight} />
         </div>
 
