@@ -15,7 +15,7 @@ export const tileMappings: Record<string, string> = {
   "crock-pot": "tile031.png",
   "drying-rack": "tile032.png",
   "chest": "tile045.png",
-  "icebox": "tile046.png",
+  "ice-box": "tile046.png",
   "sign": "tile068.png",
   "tent": "tile016.png",
   "siesta-lean-to": "tile017.png",
