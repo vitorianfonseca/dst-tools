@@ -98,9 +98,9 @@
      setTogglingVisibility(null);
      
      if (error) {
-       toast.error("Erro ao alterar visibilidade");
+       toast.error("Error changing visibility");
      } else {
-       toast.success(newVisibility === "public" ? "Base agora é pública" : "Base agora é privada");
+       toast.success(newVisibility === "public" ? "Base is now public" : "Base is now private");
        if (currentWorkspace?.id === workspace.id) {
          onWorkspaceChange({ ...currentWorkspace, visibility: newVisibility });
        }
@@ -252,7 +252,7 @@
                                  className="h-6 w-6"
                                  onClick={(e) => handleToggleVisibility(workspace, e)}
                                  disabled={togglingVisibility === workspace.id}
-                                 title={workspace.visibility === "public" ? "Tornar privada" : "Tornar pública"}
+                                 title={workspace.visibility === "public" ? "Make private" : "Make public"}
                                >
                                  {togglingVisibility === workspace.id ? (
                                    <Loader2 className="h-3 w-3 animate-spin" />
@@ -342,7 +342,7 @@
                  <div className="text-center py-6 px-4">
                    <Users className="h-8 w-8 text-muted-foreground/50 mx-auto mb-2" />
                    <p className="text-xs text-muted-foreground">
-                     Nenhuma base pública de amigos
+                     No public bases from friends
                    </p>
                  </div>
                ) : (
@@ -382,7 +382,7 @@
          <AlertDialogHeader>
            <AlertDialogTitle>Eliminar base?</AlertDialogTitle>
            <AlertDialogDescription>
-             A base "{deleteTarget?.name}" será eliminada permanentemente. Esta ação não pode ser desfeita.
+             The base "{deleteTarget?.name}" will be permanently deleted. This action cannot be undone.
            </AlertDialogDescription>
          </AlertDialogHeader>
          <AlertDialogFooter>

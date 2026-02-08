@@ -125,7 +125,7 @@ export interface CanvasWorkspace {
   };
   camera: CanvasCamera;
 
-  // Seleção atual
+  // Current selection
   selectedIds: Set<string>;
 
   // Settings de visualização

@@ -96,7 +96,7 @@ export function TileMapper() {
     <div className="w-full max-w-6xl mx-auto p-6 space-y-6 bg-background">
       <h1 className="text-3xl font-bold">DST Tile Mapper</h1>
       <p className="text-sm text-muted-foreground">
-        Selecione um item, escolha o asset set, e clique no tile correto.
+        Select an item, choose the asset set, and click on the correct tile.
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -163,7 +163,7 @@ export function TileMapper() {
                     </label>
                     <Input
                       type="text"
-                      placeholder="Digite número do tile..."
+                      placeholder="Enter tile number..."
                       value={tileSearch}
                       onChange={(e) => setTileSearch(e.target.value)}
                       className="text-sm"
@@ -173,7 +173,7 @@ export function TileMapper() {
                   {/* Tile Preview Grid */}
                   <div className="bg-secondary/30 p-4 rounded">
                     <p className="text-xs text-muted-foreground mb-3">
-                      Clique no tile correto de {selectedSet} ({filteredTiles.length} tiles):
+                      Click on the correct tile from {selectedSet} ({filteredTiles.length} tiles):
                     </p>
                     <div className="grid grid-cols-8 gap-2 max-h-64 overflow-y-auto">
                       {filteredTiles.map((tileNum) => (
@@ -209,7 +209,7 @@ export function TileMapper() {
             </>
           ) : (
             <Card className="p-4 text-center text-muted-foreground">
-              Selecione um item para começar
+              Select an item to start
             </Card>
           )}
         </div>
@@ -217,14 +217,14 @@ export function TileMapper() {
 
       {/* Code Output */}
       <Card className="p-4 space-y-3">
-        <h2 className="font-bold">Código gerado:</h2>
+        <h2 className="font-bold">Generated code:</h2>
         <pre className="bg-secondary p-3 rounded text-xs overflow-x-auto max-h-48 overflow-y-auto">
           <code>{getMappingCode()}</code>
         </pre>
         <Button
           onClick={() => {
             navigator.clipboard.writeText(getMappingCode());
-            alert("Código copiei para clipboard!");
+            alert("Code copied to clipboard!");
           }}
           className="w-full"
         >

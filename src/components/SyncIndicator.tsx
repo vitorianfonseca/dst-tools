@@ -25,7 +25,7 @@
      },
      error: {
        icon: CloudOff,
-       text: "Erro ao guardar",
+       text: "Error saving",
        className: "text-destructive",
        animate: false,
      },
