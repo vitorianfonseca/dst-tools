@@ -4,6 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { tileMappings, getTileMapping } from "@/data/tileMappings";
 
+const tileAssets = import.meta.glob<string>(
+  "@/assets/dst-assets/items/splited/**/*.png",
+  { eager: true, query: "?url", import: "default" }
+);
+
 const ITEMS = [
   // Structures
   "science-machine",
@@ -72,7 +77,6 @@ export function TileMapper() {
     if (!selectedItem) return;
 
     const tilePath = `tile${tileNum}.png`;
-    const assetPath = `/src/assets/dst-assets/items/splited/${selectedSet}/${tilePath}`;
 
     setCurrentMapping({
       ...currentMapping,
@@ -184,7 +188,7 @@ export function TileMapper() {
                           title={`tile${tileNum}.png`}
                         >
                           <img
-                            src={`/src/assets/dst-assets/items/splited/${selectedSet}/tile${tileNum}.png`}
+                            src={tileAssets[`/src/assets/dst-assets/items/splited/${selectedSet}/tile${tileNum}.png`]}
                             alt={`tile${tileNum}`}
                             className="w-full h-full object-contain p-1"
                             onError={(e) => {

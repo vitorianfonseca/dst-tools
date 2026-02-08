@@ -1,5 +1,10 @@
 import { getTileMapping } from "./tileMappings";
 
+const assetImages = import.meta.glob<string>(
+  "@/assets/dst-assets/items/splited/**/*.png",
+  { eager: true, query: "?url", import: "default" }
+);
+
 export function getStructureImage(structureId: string): string | undefined {
   const tileFile = getTileMapping(structureId);
   if (!tileFile) return undefined;
@@ -13,5 +18,6 @@ export function getStructureImage(structureId: string): string | undefined {
     ? "item_set2"
     : "item_set3";
 
-  return `/src/assets/dst-assets/items/splited/${itemSet}/${tileFile}`;
+  const key = `/src/assets/dst-assets/items/splited/${itemSet}/${tileFile}`;
+  return assetImages[key];
 }

@@ -1,5 +1,10 @@
 import { getTileMapping } from "./tileMappings";
 
+const materialImages = import.meta.glob<string>(
+  "@/assets/dst-assets/items/splited/item_set2/*.png",
+  { eager: true, query: "?url", import: "default" }
+);
+
 export interface Material {
   name: string;
   image?: string;
@@ -62,7 +67,8 @@ export function getMaterialImage(materialName: string): string | undefined {
   const tileFile = getTileMapping(lowerName);
   
   if (tileFile) {
-    return `/src/assets/dst-assets/items/splited/item_set2/${tileFile}`;
+    const key = `/src/assets/dst-assets/items/splited/item_set2/${tileFile}`;
+    return materialImages[key];
   }
 
   return undefined;
