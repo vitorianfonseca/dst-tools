@@ -1,6 +1,7 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { Pool } from 'pg';
 import * as dotenv from 'dotenv';
+import { join } from 'path';
 
 dotenv.config();
 
@@ -10,12 +11,23 @@ const pool = new Pool({
 });
 
 async function migrate() {
-  const sql = readFileSync('./neon/migrations/001_initial.sql', 'utf-8');
-  
   try {
-    console.log('🚀 Applying migration...');
-    await pool.query(sql);
-    console.log('✅ Migration applied successfully');
+    console.log('🚀 Applying migrations...');
+
+    // Get all SQL files in migrations directory
+    const migrationsDir = './neon/migrations';
+    const files = readdirSync(migrationsDir)
+      .filter(f => f.endsWith('.sql'))
+      .sort();
+
+    for (const file of files) {
+      const sql = readFileSync(join(migrationsDir, file), 'utf-8');
+      console.log(`📄 Applying ${file}...`);
+      await pool.query(sql);
+      console.log(`✅ ${file} applied successfully`);
+    }
+
+    console.log('✅ All migrations applied successfully');
   } catch (error) {
     console.error('❌ Migration failed:', error);
     process.exit(1);

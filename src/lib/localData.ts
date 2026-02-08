@@ -57,6 +57,20 @@ function randomId() {
   return `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
+// Generate a consistent UUID v5 from an email
+function generateConsistentId(email: string): string {
+  // Simple hash-based UUID generation for consistency
+  let hash = 0;
+  for (let i = 0; i < email.length; i++) {
+    const char = email.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+
+  const hex = Math.abs(hash).toString(16).padStart(8, '0');
+  return `${hex.slice(0, 8)}-${hex.slice(0, 4)}-4${hex.slice(1, 4)}-8${hex.slice(0, 3)}-${hex.slice(0, 12)}`.toLowerCase();
+}
+
 function loadJson<T>(key: string, fallback: T): T {
   if (!isBrowser()) return fallback;
   const raw = localStorage.getItem(key);
@@ -88,13 +102,33 @@ export function setLocalUser(user: LocalUser | null) {
 
 export function ensureLocalUser(email?: string, displayName?: string): LocalUser {
   const existing = getLocalUser();
+
+  // If we have an email, check if it matches the existing user
+  if (existing && email) {
+    // If email matches, return existing user
+    if (existing.email === email) {
+      return existing;
+    }
+    // If email doesn't match, create new user with consistent ID
+    const user: LocalUser = {
+      id: generateConsistentId(email),
+      email,
+      user_metadata: {
+        display_name: displayName || email.split("@")[0],
+      },
+    };
+    setLocalUser(user);
+    return user;
+  }
+
   if (existing) return existing;
 
+  const finalEmail = email || "local@dst.tools";
   const user: LocalUser = {
-    id: randomId(),
-    email: email || "local@dst.tools",
+    id: generateConsistentId(finalEmail),
+    email: finalEmail,
     user_metadata: {
-      display_name: displayName || "Utilizador",
+      display_name: displayName || finalEmail.split("@")[0],
     },
   };
 
