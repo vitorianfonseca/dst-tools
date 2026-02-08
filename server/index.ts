@@ -563,6 +563,100 @@ app.delete("/api/friends", async (req, res) => {
   }
 });
 
+// ============ WORKSPACE GROUND TILES ENDPOINTS ============
+
+// Get all ground tiles for a workspace
+app.get("/api/workspaces/:workspaceId/tiles", async (req, res) => {
+  try {
+    const { workspaceId } = req.params;
+    const result = await pool.query(
+      "SELECT * FROM workspace_ground_tiles WHERE workspace_id = $1 ORDER BY grid_x, grid_y",
+      [workspaceId]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch tiles" });
+  }
+});
+
+// Create or update ground tiles
+app.post("/api/workspaces/:workspaceId/tiles", async (req, res) => {
+  try {
+    const { workspaceId } = req.params;
+    const tiles = Array.isArray(req.body) ? req.body : [req.body];
+
+    if (tiles.length === 0) {
+      res.status(400).json({ error: "No tiles provided" });
+      return;
+    }
+
+    const createdTiles = [];
+
+    for (const tile of tiles) {
+      const { grid_x, grid_y, tile_name } = tile;
+
+      if (grid_x === undefined || grid_y === undefined || !tile_name) {
+        res.status(400).json({ error: "grid_x, grid_y, and tile_name are required" });
+        return;
+      }
+
+      const result = await pool.query(
+        `INSERT INTO workspace_ground_tiles (workspace_id, grid_x, grid_y, tile_name)
+         VALUES ($1, $2, $3, $4)
+         ON CONFLICT (workspace_id, grid_x, grid_y) DO UPDATE SET
+           tile_name = EXCLUDED.tile_name,
+           updated_at = now()
+         RETURNING *`,
+        [workspaceId, grid_x, grid_y, tile_name]
+      );
+
+      createdTiles.push(result.rows[0]);
+    }
+
+    res.status(201).json(createdTiles.length === 1 ? createdTiles[0] : createdTiles);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to create/update tiles" });
+  }
+});
+
+// Delete a specific ground tile
+app.delete("/api/workspaces/:workspaceId/tiles/:gridX/:gridY", async (req, res) => {
+  try {
+    const { workspaceId, gridX, gridY } = req.params;
+    const result = await pool.query(
+      "DELETE FROM workspace_ground_tiles WHERE workspace_id = $1 AND grid_x = $2 AND grid_y = $3",
+      [workspaceId, parseInt(gridX), parseInt(gridY)]
+    );
+
+    if (result.rowCount === 0) {
+      res.status(404).json({ error: "Tile not found" });
+      return;
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to delete tile" });
+  }
+});
+
+// Delete all tiles for a workspace
+app.delete("/api/workspaces/:workspaceId/tiles", async (req, res) => {
+  try {
+    const { workspaceId } = req.params;
+    await pool.query(
+      "DELETE FROM workspace_ground_tiles WHERE workspace_id = $1",
+      [workspaceId]
+    );
+    res.status(204).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to delete tiles" });
+  }
+});
+
 app.listen(port, () => {
   console.log(`API listening on http://localhost:${port}`);
 });
