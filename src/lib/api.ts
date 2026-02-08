@@ -20,11 +20,3 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}): Pr
 
   return (await response.json()) as T;
 }
-
-// Sync workspace data with database (PATCH request)
-export async function syncWorkspaceData(workspaceId: string, data: Record<string, unknown>) {
-  return apiRequest(`/workspaces/${workspaceId}`, {
-    method: "PATCH",
-    body: JSON.stringify({ data }),
-  });
-}

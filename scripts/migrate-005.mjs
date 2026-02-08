@@ -10,12 +10,11 @@ const pool = new Pool({
 });
 
 async function migrate() {
-    const sql = readFileSync('./neon/migrations/003_add_email_to_profiles.sql', 'utf-8');
-
     try {
-        console.log('🚀 Applying migration 003...');
+        console.log('🚀 Applying migration 005...');
+        const sql = readFileSync('./neon/migrations/005_create_workspace_tiles.sql', 'utf-8');
         await pool.query(sql);
-        console.log('✅ Migration applied successfully');
+        console.log('✅ Migration 005 applied successfully');
     } catch (error) {
         console.error('❌ Migration failed:', error);
         process.exit(1);

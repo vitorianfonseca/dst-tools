@@ -26,11 +26,11 @@ const Index = () => {
   const [isDuplicating, setIsDuplicating] = useState(false);
   const [showLeftSidebar, setShowLeftSidebar] = useState(true);
   const [showRightSidebar, setShowRightSidebar] = useState(true);
-  
+
   // History for undo/redo
   const { pushState, undo, redo, canUndo, canRedo, clear: clearHistory } = useHistory();
   const lastStateRef = useRef<string>("");
-  
+
   const {
     placedStructures,
     syncStatus,
@@ -44,6 +44,7 @@ const Index = () => {
 
   const {
     groundTiles,
+    syncStatus: groundTilesSyncStatus,
     addTile,
     addTilesInArea,
     removeTilesInArea,
@@ -160,13 +161,13 @@ const Index = () => {
 
     const savedId = localStorage.getItem(WORKSPACE_STORAGE_KEY);
     let savedWorkspace: Workspace | null = null;
-    
+
     if (savedId) {
-      savedWorkspace = workspaces.find(w => w.id === savedId) || 
-                       friendWorkspaces.find(w => w.id === savedId) || 
-                       null;
+      savedWorkspace = workspaces.find(w => w.id === savedId) ||
+        friendWorkspaces.find(w => w.id === savedId) ||
+        null;
     }
-    
+
     setCurrentWorkspace(savedWorkspace || workspaces[0] || null);
   }, [workspaces, friendWorkspaces, workspacesLoading]);
 
@@ -180,11 +181,11 @@ const Index = () => {
 
   const handleDuplicate = async () => {
     if (!currentWorkspace || !user) return;
-    
+
     setIsDuplicating(true);
     const { data, error } = await duplicateWorkspace(currentWorkspace);
     setIsDuplicating(false);
-    
+
     if (error) {
       toast.error("Error duplicating base");
     } else if (data) {
@@ -208,12 +209,21 @@ const Index = () => {
     }
   };
 
+  // Combine sync status from both structures and tiles
+  // Priority: error > saving > saved > idle
+  const combinedSyncStatus = useMemo(() => {
+    if (syncStatus === "error" || groundTilesSyncStatus === "error") return "error";
+    if (syncStatus === "saving" || groundTilesSyncStatus === "saving") return "saving";
+    if (syncStatus === "saved" || groundTilesSyncStatus === "saved") return "saved";
+    return "idle";
+  }, [syncStatus, groundTilesSyncStatus]);
+
   return (
     <div className="flex flex-col h-screen bg-background overflow-hidden">
-      <Header 
-        currentWorkspace={currentWorkspace} 
+      <Header
+        currentWorkspace={currentWorkspace}
         onWorkspaceChange={handleWorkspaceChange}
-        syncIndicator={isOwnWorkspace ? <SyncIndicator status={syncStatus} /> : null}
+        syncIndicator={isOwnWorkspace ? <SyncIndicator status={combinedSyncStatus} /> : null}
         isReadOnly={isReadOnly}
         ownerName={currentWorkspace?.owner_name}
         onDuplicate={isReadOnly && user ? handleDuplicate : undefined}
@@ -226,15 +236,15 @@ const Index = () => {
       />
       <div className="flex flex-1 overflow-hidden relative">
         {showLeftSidebar && (
-          <StructureLibrary 
-          selectedStructure={canEdit ? selectedStructure : null}
-          onSelectStructure={canEdit ? setSelectedStructure : () => {}}
-          selectedGroundTile={canEdit ? selectedGroundTile : null}
-          onSelectGroundTile={canEdit ? handleSelectGroundTile : () => {}}
-          isErasingTiles={isErasingTiles}
-          onToggleEraser={canEdit ? handleToggleEraser : () => {}}
-          disabled={!canEdit}
-        />
+          <StructureLibrary
+            selectedStructure={canEdit ? selectedStructure : null}
+            onSelectStructure={canEdit ? setSelectedStructure : () => { }}
+            selectedGroundTile={canEdit ? selectedGroundTile : null}
+            onSelectGroundTile={canEdit ? handleSelectGroundTile : () => { }}
+            isErasingTiles={isErasingTiles}
+            onToggleEraser={canEdit ? handleToggleEraser : () => { }}
+            disabled={!canEdit}
+          />
         )}
         <button
           onClick={() => setShowLeftSidebar(!showLeftSidebar)}
@@ -255,15 +265,15 @@ const Index = () => {
         <PlanningCanvas
           placedStructures={placedStructures}
           groundTiles={groundTiles}
-          onAddStructure={canEdit ? addStructure : () => {}}
-          onRemoveStructure={canEdit ? removeStructure : () => {}}
-          onToggleBuilt={canEdit ? toggleBuilt : () => {}}
-          onMoveStructure={canEdit ? moveStructure : () => {}}
-          onClearAll={canEdit ? clearAll : () => {}}
-          onAddTile={canEdit ? addTile : () => {}}
-          onAddTilesInArea={canEdit ? addTilesInArea : () => {}}
-          onRemoveTilesInArea={canEdit ? removeTilesInArea : () => {}}
-          onRemoveTile={canEdit ? removeTile : () => {}}
+          onAddStructure={canEdit ? addStructure : () => { }}
+          onRemoveStructure={canEdit ? removeStructure : () => { }}
+          onToggleBuilt={canEdit ? toggleBuilt : () => { }}
+          onMoveStructure={canEdit ? moveStructure : () => { }}
+          onClearAll={canEdit ? clearAll : () => { }}
+          onAddTile={canEdit ? addTile : () => { }}
+          onAddTilesInArea={canEdit ? addTilesInArea : () => { }}
+          onRemoveTilesInArea={canEdit ? removeTilesInArea : () => { }}
+          onRemoveTile={canEdit ? removeTile : () => { }}
           selectedStructure={canEdit ? selectedStructure : null}
           selectedGroundTile={canEdit ? selectedGroundTile : null}
           isErasingTiles={isErasingTiles}
@@ -292,9 +302,9 @@ const Index = () => {
         </button>
         {showRightSidebar && (
           <RightSidebar
-          placedStructures={placedStructures}
-          onToggleBuilt={canEdit ? toggleBuilt : () => {}}
-        />
+            placedStructures={placedStructures}
+            onToggleBuilt={canEdit ? toggleBuilt : () => { }}
+          />
         )}
       </div>
     </div>
