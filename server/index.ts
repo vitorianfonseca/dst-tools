@@ -2,15 +2,12 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { Pool } from "pg";
-import jwt from "jsonwebtoken";
-import crypto from "crypto";
 
 dotenv.config();
 
 const app = express();
 const port = Number(process.env.PORT || 3001);
 const connectionString = process.env.DATABASE_URL;
-const jwtSecret = process.env.JWT_SECRET || "dev-secret-key-change-in-production";
 
 if (!connectionString) {
   throw new Error("DATABASE_URL is not set");
@@ -18,164 +15,8 @@ if (!connectionString) {
 
 const pool = new Pool({ connectionString });
 
-// Hash password using SHA256
-function hashPassword(password: string): string {
-  return crypto.createHash("sha256").update(password).digest("hex");
-}
-
-// Generate JWT token
-function generateToken(userId: string): string {
-  return jwt.sign({ userId }, jwtSecret, { expiresIn: "7d" });
-}
-
-// Verify JWT token
-function verifyToken(token: string): { userId: string } | null {
-  try {
-    return jwt.verify(token, jwtSecret) as { userId: string };
-  } catch {
-    return null;
-  }
-}
-
 app.use(cors());
 app.use(express.json({ limit: "2mb" }));
-
-// ============ AUTHENTICATION ENDPOINTS ============
-
-app.post("/api/auth/signup", async (req, res) => {
-  try {
-    const { email, password, display_name } = req.body;
-
-    if (!email || !password) {
-      res.status(400).json({ error: "Email and password are required" });
-      return;
-    }
-
-    // Check if user already exists
-    const existing = await pool.query(
-      "SELECT id FROM auth_users WHERE email = $1",
-      [email]
-    );
-
-    if (existing.rows.length > 0) {
-      res.status(409).json({ error: "User already exists" });
-      return;
-    }
-
-    // Create user in auth_users table
-    const userId = crypto.randomUUID();
-    const passwordHash = hashPassword(password);
-
-    await pool.query(
-      "INSERT INTO auth_users (id, email, password_hash, name) VALUES ($1, $2, $3, $4)",
-      [userId, email, passwordHash, display_name || email]
-    );
-
-    // Ensure profile exists
-    await pool.query(
-      `INSERT INTO profiles (id, email, display_name)
-       VALUES ($1, $2, $3)
-       ON CONFLICT (id) DO UPDATE SET
-         email = EXCLUDED.email,
-         display_name = EXCLUDED.display_name`,
-      [userId, email, display_name || email]
-    );
-
-    const token = generateToken(userId);
-
-    res.status(201).json({
-      user: { id: userId, email, name: display_name || email },
-      token,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to sign up" });
-  }
-});
-
-app.post("/api/auth/signin", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      res.status(400).json({ error: "Email and password are required" });
-      return;
-    }
-
-    // Find user
-    const result = await pool.query(
-      "SELECT id, email, name, password_hash FROM auth_users WHERE email = $1",
-      [email]
-    );
-
-    if (result.rows.length === 0) {
-      res.status(401).json({ error: "Invalid credentials" });
-      return;
-    }
-
-    const user = result.rows[0];
-    const passwordHash = hashPassword(password);
-
-    if (user.password_hash !== passwordHash) {
-      res.status(401).json({ error: "Invalid credentials" });
-      return;
-    }
-
-    const token = generateToken(user.id);
-
-    res.json({
-      user: { id: user.id, email: user.email, name: user.name },
-      token,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to sign in" });
-  }
-});
-
-app.get("/api/auth/session", async (req, res) => {
-  try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith("Bearer ")) {
-      res.status(401).json({ error: "Missing token" });
-      return;
-    }
-
-    const token = authHeader.substring(7);
-    const decoded = verifyToken(token);
-
-    if (!decoded) {
-      res.status(401).json({ error: "Invalid token" });
-      return;
-    }
-
-    // Fetch user from database
-    const result = await pool.query(
-      "SELECT id, email, name FROM auth_users WHERE id = $1",
-      [decoded.userId]
-    );
-
-    if (result.rows.length === 0) {
-      res.status(401).json({ error: "User not found" });
-      return;
-    }
-
-    res.json({
-      user: result.rows[0],
-      token,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to fetch session" });
-  }
-});
-
-app.post("/api/auth/logout", (_req, res) => {
-  res.json({ ok: true });
-});
-
-// ============ END AUTHENTICATION ENDPOINTS ============
-
 
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true });
@@ -230,7 +71,6 @@ app.put("/api/profiles/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const {
-      email = null,
       display_name = null,
       avatar_url = null,
       bio = null,
@@ -238,31 +78,17 @@ app.put("/api/profiles/:id", async (req, res) => {
       is_private = false,
     } = req.body || {};
 
-    // Check if email is already used by another profile
-    if (email) {
-      const existingEmail = await pool.query(
-        "SELECT id FROM profiles WHERE email = $1 AND id != $2",
-        [email, id]
-      );
-
-      if (existingEmail.rows.length > 0) {
-        res.status(409).json({ error: "Email already in use by another profile" });
-        return;
-      }
-    }
-
     const result = await pool.query(
-      `INSERT INTO profiles (id, email, display_name, avatar_url, bio, banner_url, is_private)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `INSERT INTO profiles (id, display_name, avatar_url, bio, banner_url, is_private)
+       VALUES ($1, $2, $3, $4, $5, $6)
        ON CONFLICT (id) DO UPDATE SET
-         email = EXCLUDED.email,
          display_name = EXCLUDED.display_name,
          avatar_url = EXCLUDED.avatar_url,
          bio = EXCLUDED.bio,
          banner_url = EXCLUDED.banner_url,
          is_private = EXCLUDED.is_private
        RETURNING *`,
-      [id, email, display_name, avatar_url, bio, banner_url, is_private]
+      [id, display_name, avatar_url, bio, banner_url, is_private]
     );
 
     res.json(result.rows[0]);
@@ -310,10 +136,10 @@ app.get("/api/workspaces/public", async (req, res) => {
       ...row,
       owner: row.owner_id
         ? {
-          id: row.owner_id,
-          display_name: row.display_name,
-          avatar_url: row.avatar_url,
-        }
+            id: row.owner_id,
+            display_name: row.display_name,
+            avatar_url: row.avatar_url,
+          }
         : null,
     }));
 
@@ -422,8 +248,8 @@ app.get("/api/friends/summary", async (req, res) => {
 
     const friends = friendIds.length
       ? (
-        await pool.query("SELECT * FROM profiles WHERE id = ANY($1)", [friendIds])
-      ).rows
+          await pool.query("SELECT * FROM profiles WHERE id = ANY($1)", [friendIds])
+        ).rows
       : [];
 
     const received = await pool.query(
@@ -441,13 +267,13 @@ app.get("/api/friends/summary", async (req, res) => {
 
     const senderProfiles = senderIds.length
       ? (
-        await pool.query("SELECT * FROM profiles WHERE id = ANY($1)", [senderIds])
-      ).rows
+          await pool.query("SELECT * FROM profiles WHERE id = ANY($1)", [senderIds])
+        ).rows
       : [];
     const receiverProfiles = receiverIds.length
       ? (
-        await pool.query("SELECT * FROM profiles WHERE id = ANY($1)", [receiverIds])
-      ).rows
+          await pool.query("SELECT * FROM profiles WHERE id = ANY($1)", [receiverIds])
+        ).rows
       : [];
 
     const pendingRequests = received.rows.map((row) => ({
