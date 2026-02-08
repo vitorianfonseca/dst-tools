@@ -363,7 +363,7 @@ import { Grid3X3, MousePointer2, ZoomIn, ZoomOut, Focus, Trash2 } from "lucide-r
              {placedStructures.length} structures • {groundTiles.length} tiles • Zoom: {Math.round(zoom * 100)}%
              {isReadOnly && (
                <span className="ml-2 text-muted-foreground">
-                 • Modo visualização
+                 • View only mode
                </span>
              )}
              {selectedStructure && !isReadOnly && (
@@ -535,8 +535,8 @@ import { Grid3X3, MousePointer2, ZoomIn, ZoomOut, Focus, Trash2 } from "lucide-r
            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
              <EmptyState
                icon={MousePointer2}
-               title="Arraste ou clique para colocar"
-               description="Arraste da biblioteca à esquerda ou clique numa estrutura/tile e depois no grid"
+               title="Drag or click to place"
+               description="Drag from the library or click on a structure/tile and then on the grid"
                className="bg-card/90 backdrop-blur-sm rounded-xl shadow-soft-lg"
              />
            </div>

@@ -88,8 +88,8 @@ export default function Landing() {
               </div>
 
               <p className="text-lg sm:text-xl text-white/80 leading-relaxed max-w-xl">
-                Uma suite de ferramentas para Don't Starve Together. Planeia bases,
-                pesquisa conteúdos e partilha conhecimentos com a comunidade.
+                A suite of tools for Don't Starve Together. Plan bases,
+                search content and share knowledge with the community.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
@@ -100,7 +100,7 @@ export default function Landing() {
                       size="lg"
                       className="bg-[#d4823b] hover:bg-[#b56f2f] text-white border-none gap-2 text-lg h-14 px-8 font-bold uppercase tracking-wide"
                     >
-                      Abrir Ferramenta
+                      Open Tool
                     </Button>
                     <Button
                       onClick={() => navigate("/community")}
@@ -118,7 +118,7 @@ export default function Landing() {
                       size="lg"
                       className="bg-[#d4823b] hover:bg-[#b56f2f] text-white border-none gap-2 text-lg h-14 px-8 font-bold uppercase tracking-wide"
                     >
-                      Começar Grátis
+                      Get Started Free
                     </Button>
                     <Button
                       onClick={() => navigate("/community")}
@@ -126,7 +126,7 @@ export default function Landing() {
                       size="lg"
                       className="border-white/30 bg-transparent text-white hover:bg-white/10 gap-2 text-lg h-14 px-8 font-bold uppercase tracking-wide"
                     >
-                      Ver Exemplos
+                      View Examples
                     </Button>
                   </>
                 )}
@@ -144,7 +144,7 @@ export default function Landing() {
                 </div>
                 <div>
                   <p className="text-3xl font-bold text-[#d4823b]">100%</p>
-                  <p className="text-sm text-white/60 uppercase tracking-wide">Grátis</p>
+                  <p className="text-sm text-white/60 uppercase tracking-wide">Free</p>
                 </div>
               </div>
             </div>
@@ -166,7 +166,7 @@ export default function Landing() {
                 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter"
                 style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}
               >
-                Ferramentas Principais
+                Main Tools
               </h2>
               <p className="text-white/60">As 3 funcionalidades core do DST Tools</p>
             </div>
@@ -211,9 +211,9 @@ export default function Landing() {
         <div className="max-w-[1100px] mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
-              O Que o Site Oferece
+              What the Site Offers
             </h2>
-            <p className="text-xl text-white/60">Planeamento, organizacao e performance para as tuas bases</p>
+            <p className="text-xl text-white/60">Planning, organization and performance for your bases</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -222,9 +222,9 @@ export default function Landing() {
               <div className="mb-4">
                 <MapPin className="h-8 w-8 text-[#d4823b]" />
               </div>
-              <h3 className="text-xl font-bold mb-3 uppercase tracking-wide">Planeamento Visual</h3>
+              <h3 className="text-xl font-bold mb-3 uppercase tracking-wide">Visual Planning</h3>
               <p className="text-white/70 leading-relaxed">
-                Cria layouts claros e organiza a tua base com precisao.
+                Create clear layouts and organize your base with precision.
               </p>
             </div>
 
@@ -233,9 +233,9 @@ export default function Landing() {
               <div className="mb-4">
                 <Sparkles className="h-8 w-8 text-[#d4823b]" />
               </div>
-              <h3 className="text-xl font-bold mb-3 uppercase tracking-wide">Organizacao Inteligente</h3>
+              <h3 className="text-xl font-bold mb-3 uppercase tracking-wide">Smart Organization</h3>
               <p className="text-white/70 leading-relaxed">
-                Mantem tudo categorizado para encontrares o que precisas.
+                Keep everything categorized to find what you need.
               </p>
             </div>
 
@@ -244,9 +244,9 @@ export default function Landing() {
               <div className="mb-4">
                 <Zap className="h-8 w-8 text-[#d4823b]" />
               </div>
-              <h3 className="text-xl font-bold mb-3 uppercase tracking-wide">Experiencia Rapida</h3>
+              <h3 className="text-xl font-bold mb-3 uppercase tracking-wide">Fast Experience</h3>
               <p className="text-white/70 leading-relaxed">
-                Interface leve e fluida mesmo com projetos grandes.
+                Lightweight and fluid interface even with large projects.
               </p>
             </div>
           </div>
@@ -257,17 +257,17 @@ export default function Landing() {
       <section className="py-24 px-8">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter mb-6" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
-            Pronto para começar?
+            Ready to get started?
           </h2>
           <p className="text-xl text-white/70 mb-10">
-            Cria a tua conta gratuita e começa a planear a base perfeita agora.
+            Create your free account and start planning the perfect base now.
           </p>
           <Button
             onClick={() => navigate(user ? "/planner" : "/auth")}
             size="lg"
             className="bg-[#d4823b] hover:bg-[#b56f2f] text-white border-none gap-2 text-lg h-14 px-10 font-bold uppercase tracking-wide"
           >
-            {user ? "Abrir App" : "Começar Grátis"}
+            {user ? "Open App" : "Get Started Free"}
             <ArrowRight className="h-5 w-5" />
           </Button>
         </div>
@@ -290,13 +290,13 @@ export default function Landing() {
                 Comunidade
               </Link>
               <Link to="/profile" className="hover:text-white transition-colors">
-                Perfil
+                Profile
               </Link>
             </div>
           </div>
           <div className="text-center text-xs text-white/40 pt-6 border-t border-white/5">
-            <p>Este projeto é uma ferramenta criada por fãs e não é afiliado oficialmente com Klei Entertainment.</p>
-            <p className="mt-1">Don't Starve Together e todos os assets relacionados são propriedade de Klei Entertainment Inc.</p>
+            <p>This project is a fan-made tool and is not officially affiliated with Klei Entertainment.</p>
+            <p className="mt-1">Don't Starve Together and all related assets are property of Klei Entertainment Inc.</p>
           </div>
         </div>
       </footer>

@@ -32,11 +32,14 @@ export const materials: Record<string, Material> = {
   "Purple Gem": { name: "Purple Gem" },
   "Red Gem": { name: "Red Gem" },
   "Blue Gem": { name: "Blue Gem" },
+  "Marble": { name: "Marble" },
 
   // Farm & Food
   "Manure": { name: "Manure" },
   "Rot": { name: "Rot" },
   "Seeds": { name: "Seeds" },
+  "Carrot": { name: "Carrot" },
+  "Fertilizer": { name: "Fertilizer" },
 
   // Other
   "Silk": { name: "Silk" },
@@ -46,10 +49,17 @@ export const materials: Record<string, Material> = {
   "Stinger": { name: "Stinger" },
   "Honeycomb": { name: "Honeycomb" },
   "Beeswax": { name: "Beeswax" },
+  "Hound Tooth": { name: "Hound Tooth" },
+  "Dragonfly Scales": { name: "Dragonfly Scales" },
+  "Shroom Skin": { name: "Shroom Skin" },
+  "Seashell": { name: "Seashell" },
+  "Ice": { name: "Ice" },
+  "Salt": { name: "Salt" },
 
-  // Lunar
+  // Lunar & Ancient
   "Moon Rock": { name: "Moon Rock" },
   "Pure Horror": { name: "Pure Horror" },
+  "Thulecite": { name: "Thulecite" },
 
   // Animals & Special
   "Rabbit": { name: "Rabbit" },

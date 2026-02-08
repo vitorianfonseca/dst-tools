@@ -28,7 +28,7 @@ import { motion, AnimatePresence } from "framer-motion";
       >
         <span className="flex items-center text-xs font-bold text-muted-foreground uppercase tracking-wider leading-none">
           Ground Tiles
-          {disabled && <span className="font-normal ml-2">(só leitura)</span>}
+          {disabled && <span className="font-normal ml-2">(read only)</span>}
         </span>
         {isExpanded ? (
           <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" />

@@ -22,7 +22,7 @@
    if (loading) {
      return (
        <div className="min-h-screen flex items-center justify-center bg-background">
-         <div className="animate-pulse text-muted-foreground">A carregar...</div>
+         <div className="animate-pulse text-muted-foreground">Loading...</div>
        </div>
      );
    }
@@ -37,7 +37,7 @@
      const { error } = await signIn(email, password);
      setIsSubmitting(false);
      if (error) {
-       toast.error("Erro ao entrar: " + error.message);
+       toast.error("Error signing in: " + error.message);
      }
    };
  
@@ -47,7 +47,7 @@
      const { error } = await signUp(email, password, displayName);
      setIsSubmitting(false);
      if (error) {
-       toast.error("Erro ao criar conta: " + error.message);
+       toast.error("Error creating account: " + error.message);
      }
      // Auto-login happens automatically with auto-confirm enabled
    };
@@ -70,8 +70,8 @@
          <CardContent>
            <Tabs defaultValue="signin" className="w-full">
              <TabsList className="grid w-full grid-cols-2">
-               <TabsTrigger value="signin">Entrar</TabsTrigger>
-               <TabsTrigger value="signup">Criar Conta</TabsTrigger>
+               <TabsTrigger value="signin">Sign In</TabsTrigger>
+               <TabsTrigger value="signup">Create Account</TabsTrigger>
              </TabsList>
              <TabsContent value="signin">
                <form onSubmit={handleSignIn} className="space-y-4">
@@ -115,7 +115,7 @@
                    </div>
                  </div>
                  <Button type="submit" className="w-full" disabled={isSubmitting}>
-                   {isSubmitting ? "A entrar..." : "Entrar"}
+                   {isSubmitting ? "Signing in..." : "Entrar"}
                  </Button>
                </form>
              </TabsContent>
@@ -150,7 +150,7 @@
                      <Input
                        id="signup-password"
                        type={showPassword ? "text" : "password"}
-                       placeholder="Mínimo 6 caracteres"
+                       placeholder="Minimum 6 characters"
                        value={password}
                        onChange={(e) => setPassword(e.target.value)}
                        required
@@ -174,7 +174,7 @@
                    </div>
                  </div>
                  <Button type="submit" className="w-full" disabled={isSubmitting}>
-                   {isSubmitting ? "A criar..." : "Criar Conta"}
+                   {isSubmitting ? "Creating..." : "Create Account"}
                  </Button>
                </form>
              </TabsContent>
