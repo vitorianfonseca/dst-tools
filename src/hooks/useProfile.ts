@@ -1,34 +1,34 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { apiRequest } from "@/lib/api";
- 
- export interface Profile {
-   id: string;
-   display_name: string | null;
-   avatar_url: string | null;
-   bio: string | null;
-   banner_url: string | null;
-   is_private: boolean;
-   created_at: string;
-   updated_at: string;
- }
- 
- export function useProfile() {
-   const { user } = useAuth();
-   const [profile, setProfile] = useState<Profile | null>(null);
-   const [loading, setLoading] = useState(true);
- 
-   useEffect(() => {
-     if (!user) {
-       setProfile(null);
-       setLoading(false);
-       return;
-     }
- 
-     fetchProfile();
-   }, [user]);
- 
-   const fetchProfile = async () => {
+
+export interface Profile {
+  id: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  bio: string | null;
+  banner_url: string | null;
+  is_private: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export function useProfile() {
+  const { user } = useAuth();
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) {
+      setProfile(null);
+      setLoading(false);
+      return;
+    }
+
+    fetchProfile();
+  }, [user]);
+
+  const fetchProfile = async () => {
     if (!user) return;
     setLoading(true);
 
@@ -41,6 +41,7 @@ import { apiRequest } from "@/lib/api";
         const created = await apiRequest<Profile>(`/profiles/${user.id}`, {
           method: "PUT",
           body: JSON.stringify({
+            email: user.email,
             display_name: displayName,
             avatar_url: null,
             bio: null,
@@ -56,8 +57,8 @@ import { apiRequest } from "@/lib/api";
       setLoading(false);
     }
   };
- 
-   const updateProfile = async (updates: Partial<Profile>) => {
+
+  const updateProfile = async (updates: Partial<Profile>) => {
     if (!user) return { error: new Error("Not authenticated") };
 
     const current = profile || {
@@ -88,6 +89,6 @@ import { apiRequest } from "@/lib/api";
       return { error: error as Error };
     }
   };
- 
-   return { profile, loading, updateProfile, refetch: fetchProfile };
- }
+
+  return { profile, loading, updateProfile, refetch: fetchProfile };
+}
