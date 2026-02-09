@@ -280,8 +280,8 @@ export const structures: Structure[] = [
     icon: "❄️",
     iconImage: getStructureImage("endothermic-fire-pit"),
     materials: [
-      { name: "Cut Stone", amount: 2 },
-      { name: "Rocks", amount: 4 },
+      { name: "Nitre", amount: 2 },
+      { name: "Cut Stone", amount: 4 },
       { name: "Electrical Doodad", amount: 2 },
     ],
   },
@@ -319,9 +319,9 @@ export const structures: Structure[] = [
     icon: "🔨",
     iconImage: getStructureImage("scaled-furnace"),
     materials: [
+      { name: "Red Gem", amount: 2 },
+      { name: "Charcoal", amount: 10 },
       { name: "Dragonfly Scales", amount: 1 },
-      { name: "Cut Stone", amount: 10 },
-      { name: "Charcoal", amount: 4 },
     ],
   },
 
@@ -647,9 +647,9 @@ export const structures: Structure[] = [
     icon: "⛏️",
     iconImage: getStructureImage("garden-digamajig"),
     materials: [
-      { name: "Boards", amount: 8 },
+      { name: "Boards", amount: 3 },
       { name: "Rope", amount: 2 },
-      { name: "Cut Stone", amount: 1 },
+      { name: "Flint", amount: 2 },
     ],
   },
   {
@@ -660,9 +660,9 @@ export const structures: Structure[] = [
     icon: "🪱",
     iconImage: getStructureImage("composting-bin"),
     materials: [
-      { name: "Boards", amount: 4 },
-      { name: "Rot", amount: 6 },
-      { name: "Manure", amount: 3 },
+      { name: "Boards", amount: 3 },
+      { name: "Rot", amount: 1 },
+      { name: "Cut Grass", amount: 1 },
     ],
   },
   {
@@ -706,14 +706,345 @@ export const structures: Structure[] = [
   },
   {
     id: "scarecrow",
-    name: "Scarecrow",
+    name: "Friendly Scarecrow",
     category: "farming",
     description: "Protects farms from crows",
     icon: "🎃",
     iconImage: getStructureImage("scarecrow"),
     materials: [
+      { name: "Pumpkin", amount: 1 },
+      { name: "Cut Grass", amount: 3 },
+      { name: "Boards", amount: 3 },
+    ],
+  },
+
+  // === NEW STRUCTURES ===
+
+  // LIGHT
+  {
+    id: "endothermic-fire",
+    name: "Endothermic Fire",
+    category: "light",
+    description: "Temporary cooling light source for summer",
+    icon: "🧊",
+    iconImage: getStructureImage("endothermic-fire"),
+    materials: [
+      { name: "Cut Grass", amount: 3 },
+      { name: "Nitre", amount: 2 },
+    ],
+  },
+
+  // SCIENCE
+  {
+    id: "brightsmithy",
+    name: "Brightsmithy",
+    category: "science",
+    description: "Lunar crafting station for brightshade items",
+    icon: "🌕",
+    iconImage: getStructureImage("brightsmithy"),
+    materials: [
+      { name: "Moon Rock", amount: 5 },
+      { name: "Moon Shard", amount: 5 },
+      { name: "Pure Brilliance", amount: 1 },
+    ],
+  },
+
+  // MAGIC
+  {
+    id: "portal-paraphernalia",
+    name: "Portal Paraphernalia",
+    category: "magic",
+    description: "Used on the Florid Postern to begin constructing the Celestial Portal",
+    icon: "🌌",
+    iconImage: getStructureImage("portal-paraphernalia"),
+    materials: [
       { name: "Boards", amount: 1 },
-      { name: "Cut Grass", amount: 6 },
+      { name: "Rope", amount: 1 },
+    ],
+  },
+  {
+    id: "moon-rock-idol",
+    name: "Moon Rock Idol",
+    category: "magic",
+    description: "Offered to the Celestial Portal to switch characters",
+    icon: "🌘",
+    iconImage: getStructureImage("moon-rock-idol"),
+    materials: [
+      { name: "Moon Rock", amount: 1 },
+      { name: "Purple Gem", amount: 1 },
+    ],
+  },
+
+  // SURVIVAL
+  {
+    id: "tent-roll",
+    name: "Tent Roll",
+    category: "survival",
+    description: "Portable tent exclusive to Walter",
+    icon: "🎒",
+    iconImage: getStructureImage("tent-roll"),
+    materials: [
+      { name: "Straw Roll", amount: 1 },
+      { name: "Twigs", amount: 4 },
+      { name: "Rope", amount: 2 },
+    ],
+  },
+  {
+    id: "astral-detector",
+    name: "Astral Detector",
+    category: "survival",
+    description: "Detects celestial anomalies in the world",
+    icon: "🔭",
+    iconImage: getStructureImage("astral-detector"),
+    materials: [
+      { name: "Moon Rock", amount: 1 },
+      { name: "Thulecite", amount: 1 },
+    ],
+  },
+
+  // STRUCTURES - Walls
+  {
+    id: "moon-rock-wall",
+    name: "Moon Rock Wall",
+    category: "structures",
+    description: "Strong wall that regenerates health over time",
+    icon: "🌙",
+    iconImage: getStructureImage("moon-rock-wall"),
+    materials: [
+      { name: "Moon Rock", amount: 4 },
+    ],
+  },
+  {
+    id: "dreadstone-wall",
+    name: "Dreadstone Wall",
+    category: "structures",
+    description: "The strongest wall in the game",
+    icon: "🖤",
+    iconImage: getStructureImage("dreadstone-wall"),
+    materials: [
+      { name: "Dreadstone", amount: 4 },
+    ],
+  },
+
+  // STRUCTURES - Winona
+  {
+    id: "winonas-generator",
+    name: "Winona's Generator",
+    category: "structures",
+    description: "Powers Winona's structures for one day. Winona-exclusive",
+    icon: "🔋",
+    iconImage: getStructureImage("winonas-generator"),
+    materials: [
+      { name: "Trusty Tape", amount: 1 },
+      { name: "Log", amount: 2 },
+      { name: "Nitre", amount: 2 },
+    ],
+  },
+  {
+    id: "winonas-gemerator",
+    name: "Winona's G.E.M.erator",
+    category: "structures",
+    description: "Advanced generator powered by gems. Winona-exclusive",
+    icon: "💎",
+    iconImage: getStructureImage("winonas-gemerator"),
+    materials: [
+      { name: "Trusty Tape", amount: 1 },
+      { name: "Boards", amount: 2 },
+      { name: "Electrical Doodad", amount: 2 },
+    ],
+  },
+  {
+    id: "winonas-catapult",
+    name: "Winona's Catapult",
+    category: "structures",
+    description: "Automated defense turret that fires rocks. Winona-exclusive",
+    icon: "🏹",
+    iconImage: getStructureImage("winonas-catapult"),
+    materials: [
+      { name: "Trusty Tape", amount: 1 },
+      { name: "Twigs", amount: 3 },
+      { name: "Rocks", amount: 15 },
+    ],
+  },
+  {
+    id: "winonas-spotlight",
+    name: "Winona's Spotlight",
+    category: "structures",
+    description: "Illuminates nearby players when powered. Winona-exclusive",
+    icon: "💡",
+    iconImage: getStructureImage("winonas-spotlight"),
+    materials: [
+      { name: "Trusty Tape", amount: 1 },
+      { name: "Gold Nugget", amount: 2 },
+      { name: "Fireflies", amount: 1 },
+    ],
+  },
+
+  // STRUCTURES - Utility
+  {
+    id: "lazy-deserter",
+    name: "The Lazy Deserter",
+    category: "structures",
+    description: "Teleports players between two linked Lazy Deserters",
+    icon: "🌀",
+    iconImage: getStructureImage("lazy-deserter"),
+    materials: [
+      { name: "Desert Stone", amount: 1 },
+      { name: "Orange Moonlens", amount: 1 },
+      { name: "Cut Stone", amount: 3 },
+    ],
+  },
+  {
+    id: "thermal-measurer",
+    name: "Thermal Measurer",
+    category: "structures",
+    description: "Measures the current ambient temperature",
+    icon: "🌡️",
+    iconImage: getStructureImage("thermal-measurer"),
+    materials: [
+      { name: "Boards", amount: 2 },
+      { name: "Gold Nugget", amount: 2 },
+    ],
+  },
+  {
+    id: "end-table",
+    name: "End Table",
+    category: "structures",
+    description: "Decorative table that displays a single item",
+    icon: "🪑",
+    iconImage: getStructureImage("end-table"),
+    materials: [
+      { name: "Marble", amount: 2 },
+      { name: "Boards", amount: 2 },
+      { name: "Carpeted Flooring", amount: 2 },
+    ],
+  },
+  {
+    id: "mannequin",
+    name: "Mannequin",
+    category: "structures",
+    description: "Displays clothing and armor",
+    icon: "🧍",
+    iconImage: getStructureImage("mannequin"),
+    materials: [
+      { name: "Silk", amount: 2 },
+      { name: "Boards", amount: 2 },
+      { name: "Cut Grass", amount: 3 },
+    ],
+  },
+  {
+    id: "potted-succulent",
+    name: "Potted Succulent",
+    category: "structures",
+    description: "Decorative potted plant",
+    icon: "🌵",
+    iconImage: getStructureImage("potted-succulent"),
+    materials: [
+      { name: "Succulent", amount: 2 },
+      { name: "Cut Stone", amount: 1 },
+    ],
+  },
+  {
+    id: "punching-bag",
+    name: "Punching Bag",
+    category: "structures",
+    description: "Training dummy that displays damage numbers",
+    icon: "🥊",
+    iconImage: getStructureImage("punching-bag"),
+    materials: [
+      { name: "Cut Grass", amount: 3 },
+      { name: "Boards", amount: 1 },
+    ],
+  },
+  {
+    id: "spelunkers-bridge-kit",
+    name: "Spelunker's Bridge Kit",
+    category: "structures",
+    description: "Builds a bridge over gaps in caves",
+    icon: "🌉",
+    iconImage: getStructureImage("spelunkers-bridge-kit"),
+    materials: [
+      { name: "Boards", amount: 4 },
+      { name: "Rope", amount: 2 },
+    ],
+  },
+  {
+    id: "pillar-scaffold",
+    name: "Pillar Scaffold",
+    category: "structures",
+    description: "Scaffold filled with rocks to create a support pillar",
+    icon: "🏗️",
+    iconImage: getStructureImage("pillar-scaffold"),
+    materials: [
+      { name: "Cut Stone", amount: 1 },
+      { name: "Boards", amount: 2 },
+    ],
+  },
+
+  // STRUCTURES - Other
+  {
+    id: "directional-sign",
+    name: "Directional Sign",
+    category: "structures",
+    description: "A sign that displays text on the map",
+    icon: "➡️",
+    iconImage: getStructureImage("directional-sign"),
+    materials: [
+      { name: "Boards", amount: 1 },
+    ],
+  },
+  {
+    id: "lunar-siphonator",
+    name: "Lunar Siphonator",
+    category: "structures",
+    description: "Multi-stage structure that siphons lunar energy",
+    icon: "🌗",
+    iconImage: getStructureImage("lunar-siphonator"),
+    materials: [
+      { name: "Scrap", amount: 4 },
+      { name: "Moongleam", amount: 5 },
+      { name: "Electrical Doodad", amount: 2 },
+    ],
+  },
+  {
+    id: "bright-boxer",
+    name: "Bright Boxer",
+    category: "structures",
+    description: "Lunar-aligned punching bag with planar protection",
+    icon: "☀️",
+    iconImage: getStructureImage("bright-boxer"),
+    materials: [
+      { name: "Cut Grass", amount: 3 },
+      { name: "Boards", amount: 1 },
+      { name: "Pure Brilliance", amount: 1 },
+    ],
+  },
+  {
+    id: "shadow-boxer",
+    name: "Shadow Boxer",
+    category: "structures",
+    description: "Shadow-aligned punching bag with planar protection",
+    icon: "🌑",
+    iconImage: getStructureImage("shadow-boxer"),
+    materials: [
+      { name: "Cut Grass", amount: 3 },
+      { name: "Boards", amount: 1 },
+      { name: "Pure Horror", amount: 1 },
+    ],
+  },
+
+  // FARMING
+  {
+    id: "masonry-oven",
+    name: "Masonry Oven",
+    category: "farming",
+    description: "Seasonal cooking station for Winter's Feast recipes",
+    icon: "🧱",
+    iconImage: getStructureImage("masonry-oven"),
+    materials: [
+      { name: "Cut Stone", amount: 1 },
+      { name: "Marble", amount: 1 },
+      { name: "Log", amount: 1 },
     ],
   },
 ];
