@@ -58,8 +58,12 @@ export const materials: Record<string, Material> = {
 
   // Lunar & Ancient
   "Moon Rock": { name: "Moon Rock" },
+  "Moon Shard": { name: "Moon Shard" },
   "Pure Horror": { name: "Pure Horror" },
+  "Pure Brilliance": { name: "Pure Brilliance" },
   "Thulecite": { name: "Thulecite" },
+  "Dreadstone": { name: "Dreadstone" },
+  "Moongleam": { name: "Moongleam" },
 
   // Animals & Special
   "Rabbit": { name: "Rabbit" },
@@ -68,6 +72,17 @@ export const materials: Record<string, Material> = {
   "Beard Hair": { name: "Beard Hair" },
   "Nitre": { name: "Nitre" },
   "Lureplant Bulb": { name: "Lureplant Bulb" },
+  "Fireflies": { name: "Fireflies" },
+  "Pumpkin": { name: "Pumpkin" },
+  "Succulent": { name: "Succulent" },
+
+  // Crafted & Misc
+  "Straw Roll": { name: "Straw Roll" },
+  "Trusty Tape": { name: "Trusty Tape" },
+  "Desert Stone": { name: "Desert Stone" },
+  "Orange Moonlens": { name: "Orange Moonlens" },
+  "Carpeted Flooring": { name: "Carpeted Flooring" },
+  "Scrap": { name: "Scrap" },
 };
 
 export function getMaterialImage(materialName: string): string | undefined {
