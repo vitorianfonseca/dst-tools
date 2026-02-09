@@ -44,6 +44,7 @@ const Index = () => {
 
   const {
     groundTiles,
+    syncStatus: groundTilesSyncStatus,
     addTile,
     addTilesInArea,
     removeTilesInArea,
@@ -208,12 +209,21 @@ const Index = () => {
     }
   };
 
+  // Combine sync status from both structures and tiles
+  // Priority: error > saving > saved > idle
+  const combinedSyncStatus = useMemo(() => {
+    if (syncStatus === "error" || groundTilesSyncStatus === "error") return "error";
+    if (syncStatus === "saving" || groundTilesSyncStatus === "saving") return "saving";
+    if (syncStatus === "saved" || groundTilesSyncStatus === "saved") return "saved";
+    return "idle";
+  }, [syncStatus, groundTilesSyncStatus]);
+
   return (
     <div className="flex flex-col h-screen bg-background overflow-hidden">
       <Header 
         currentWorkspace={currentWorkspace} 
         onWorkspaceChange={handleWorkspaceChange}
-        syncIndicator={isOwnWorkspace ? <SyncIndicator status={syncStatus} /> : null}
+        syncIndicator={isOwnWorkspace ? <SyncIndicator status={combinedSyncStatus} /> : null}
         isReadOnly={isReadOnly}
         ownerName={currentWorkspace?.owner_name}
         onDuplicate={isReadOnly && user ? handleDuplicate : undefined}
