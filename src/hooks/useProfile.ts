@@ -36,7 +36,7 @@ export function useProfile() {
       const nextProfile = await apiRequest<Profile>(`/profiles/${user.id}`);
       setProfile(nextProfile);
     } catch (error) {
-      const displayName = user.user_metadata?.display_name || user.email?.split("@")[0] || "Utilizador";
+      const displayName = user.name || user.email?.split("@")[0] || "Utilizador";
       try {
         const created = await apiRequest<Profile>(`/profiles/${user.id}`, {
           method: "PUT",
@@ -63,7 +63,7 @@ export function useProfile() {
 
     const current = profile || {
       id: user.id,
-      display_name: user.user_metadata?.display_name || user.email?.split("@")[0] || "Utilizador",
+      display_name: user.name || user.email?.split("@")[0] || "Utilizador",
       avatar_url: null,
       bio: null,
       banner_url: null,
