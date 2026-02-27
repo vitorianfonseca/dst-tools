@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { GroundTile, groundTiles } from "@/data/groundTiles";
 import { Workspace } from "@/hooks/useWorkspaces";
 import { updateWorkspaceData, type Json } from "@/lib/localData";
-import { syncWorkspaceData } from "@/lib/api";
 import { toast } from "sonner";
 
 export interface PlacedGroundTile {
@@ -30,9 +29,26 @@ interface GroundTileFromDB {
   updated_at: string;
 }
 
-// Map ground tile name to GroundTile object
+// Create a Map index for O(1) tile lookups
+const groundTileMap = new Map(groundTiles.map(tile => [tile.id, tile]));
+
+// Map ground tile name to GroundTile object (O(1) lookup)
 function getTileByName(name: string): GroundTile | null {
-  return groundTiles.find(tile => tile.id === name) || null;
+  return groundTileMap.get(name) || null;
+}
+
+// Fast comparison for tile arrays (avoid JSON.stringify)
+function areTilesEqual(a: PlacedGroundTile[], b: PlacedGroundTile[]): boolean {
+  if (a.length !== b.length) return false;
+
+  // Create a lookup map for b for O(n) comparison instead of O(n²)
+  const bMap = new Set(b.map(t => `${t.gridX},${t.gridY},${t.tile.id}`));
+  for (const tile of a) {
+    if (!bMap.has(`${tile.gridX},${tile.gridY},${tile.tile.id}`)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 export function useGroundTiles(workspace: Workspace | null, onWorkspaceUpdate?: (workspace: Workspace) => void) {
@@ -58,24 +74,46 @@ export function useGroundTiles(workspace: Workspace | null, onWorkspaceUpdate?: 
     saveTimeoutRef.current = setTimeout(async () => {
       try {
         // Convert PlacedGroundTile to API format (grid_x, grid_y, tile_name)
-        const tilesToSave = tiles.map(t => ({
-          grid_x: t.gridX,
-          grid_y: t.gridY,
-          tile_name: t.tile.id || t.tile.name,
-        }));
+        // Use faster construction instead of .map() for large arrays
+        const tilesToSave: Array<{ grid_x: number; grid_y: number; tile_name: string }> = [];
+        for (const t of tiles) {
+          tilesToSave.push({
+            grid_x: t.gridX,
+            grid_y: t.gridY,
+            tile_name: t.tile.id || t.tile.name,
+          });
+        }
 
         // Save to localStorage for offline support
         const existingData = (workspace.data as WorkspaceData) || {};
         const newData: WorkspaceData = { ...existingData, groundTiles: tiles };
         updateWorkspaceData(workspace.id, newData as unknown as Json);
 
-        // Sync to API
+        // Sync to API (batch update)
         if (tilesToSave.length > 0) {
-          await fetch(`/api/workspaces/${workspace.id}/tiles`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(tilesToSave),
-          });
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+          try {
+            const response = await fetch(`/api/workspaces/${workspace.id}/tiles`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(tilesToSave),
+              signal: controller.signal,
+            });
+            clearTimeout(timeout);
+
+            if (!response.ok) {
+              throw new Error(`API error: ${response.status}`);
+            }
+          } catch (fetchError) {
+            clearTimeout(timeout);
+            if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+              console.warn("Tile save timeout");
+            } else {
+              throw fetchError;
+            }
+          }
         }
 
         if (onWorkspaceUpdate) {
@@ -112,74 +150,103 @@ export function useGroundTiles(workspace: Workspace | null, onWorkspaceUpdate?: 
     const localTiles = data?.groundTiles || [];
     setGroundTiles(localTiles);
 
-    // Then sync with API in background
+    // Then sync with API in background (don't block on API)
     const loadTilesFromAPI = async () => {
       try {
-        const response = await fetch(`/api/workspaces/${workspace.id}/tiles`);
+        // Use AbortController with timeout to prevent hanging
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+        const response = await fetch(`/api/workspaces/${workspace.id}/tiles`, {
+          signal: controller.signal,
+        });
+        
+        clearTimeout(timeout);
+        
         if (!response.ok) throw new Error("Failed to load tiles");
 
         const dbTiles: GroundTileFromDB[] = await response.json();
 
-        // Convert DB tiles to PlacedGroundTile format
-        const tiles: PlacedGroundTile[] = dbTiles
-          .map(tile => {
-            const groundTile = getTileByName(tile.tile_name);
-            if (!groundTile) {
-              console.warn(`Ground tile not found: ${tile.tile_name}`);
-              return null;
-            }
-            return {
-              id: tile.id,
-              tile: groundTile,
-              gridX: tile.grid_x,
-              gridY: tile.grid_y,
-            };
-          })
-          .filter((tile): tile is PlacedGroundTile => tile !== null);
+        // Convert DB tiles to PlacedGroundTile format with early exit for large datasets
+        const tiles: PlacedGroundTile[] = [];
+        for (const tile of dbTiles) {
+          const groundTile = getTileByName(tile.tile_name);
+          if (!groundTile) {
+            console.warn(`Ground tile not found: ${tile.tile_name}`);
+            continue;
+          }
+          tiles.push({
+            id: tile.id,
+            tile: groundTile,
+            gridX: tile.grid_x,
+            gridY: tile.grid_y,
+          });
+        }
 
-        // Only update if different from local data
-        if (JSON.stringify(tiles) !== JSON.stringify(localTiles)) {
+        // Only update if different
+        if (!areTilesEqual(tiles, localTiles)) {
           setGroundTiles(tiles);
         }
       } catch (error) {
-        console.warn("Failed to load tiles from API, using localStorage:", error);
+        if (error instanceof Error && error.name === 'AbortError') {
+          console.warn("Tile loading timeout - using localStorage version");
+        } else {
+          console.warn("Failed to load tiles from API, using localStorage:", error);
+        }
         // Keep using local tiles on error
       }
     };
 
     // Load from API asynchronously without blocking initial render
-    const timeoutId = setTimeout(loadTilesFromAPI, 0);
-    return () => clearTimeout(timeoutId);
+    // Use requestIdleCallback if available, otherwise setTimeout
+    const loadAsync = () => {
+      if ('requestIdleCallback' in window) {
+        (window as any).requestIdleCallback(() => loadTilesFromAPI(), { timeout: 100 });
+      } else {
+        setTimeout(loadTilesFromAPI, 0);
+      }
+    };
+    
+    loadAsync();
   }, [workspace]);
 
   const addTile = useCallback((tile: GroundTile, gridX: number, gridY: number) => {
     // Check if tile already exists at position
-    const existing = groundTiles.find(t => t.gridX === gridX && t.gridY === gridY);
-    if (existing && existing.tile.id === tile.id) return; // Same tile, skip
-
-    const newTile: PlacedGroundTile = {
-      id: `${tile.id}-${gridX}-${gridY}`,
-      tile,
-      gridX,
-      gridY,
-      isNew: true,
-    };
-
     setGroundTiles((prev) => {
-      // Remove any existing tile at this position
-      const filtered = prev.filter(t => !(t.gridX === gridX && t.gridY === gridY));
-      const cleared = filtered.map(t => ({ ...t, isNew: false }));
-      const updated = [...cleared, newTile];
+      // Quick check if tile already exists at position with same ID
+      const existing = prev.find(t => t.gridX === gridX && t.gridY === gridY);
+      if (existing && existing.tile.id === tile.id) return prev; // Same tile, skip
+
+      const newTile: PlacedGroundTile = {
+        id: `${tile.id}-${gridX}-${gridY}`,
+        tile,
+        gridX,
+        gridY,
+        isNew: true,
+      };
+
+      // Remove any existing tile at this position + build result in one pass
+      const updated: PlacedGroundTile[] = [];
+      for (const t of prev) {
+        if (t.gridX !== gridX || t.gridY !== gridY) {
+          updated.push({ ...t, isNew: false });
+        }
+      }
+      updated.push(newTile);
+
+      // Schedule save immediately without waiting for isNew animation
       saveTiles(updated);
+
+      // Schedule async removal of isNew flag
+      setTimeout(() => {
+        setGroundTiles((current) =>
+          current.map(t => t.id === newTile.id ? { ...t, isNew: false } : t)
+        );
+      }, 500);
+
       return updated;
     });
-
-    setTimeout(() => {
-      setGroundTiles((prev) =>
-        prev.map(t => t.id === newTile.id ? { ...t, isNew: false } : t)
-      );
-    }, 500);
-  }, [groundTiles, saveTiles]);
+  }, [saveTiles]);
 
   const addTilesInArea = useCallback((tile: GroundTile, startX: number, startY: number, endX: number, endY: number) => {
     const minX = Math.min(startX, endX);
@@ -187,36 +254,41 @@ export function useGroundTiles(workspace: Workspace | null, onWorkspaceUpdate?: 
     const minY = Math.min(startY, endY);
     const maxY = Math.max(startY, endY);
 
-    const newTiles: PlacedGroundTile[] = [];
-
-    for (let x = minX; x <= maxX; x++) {
-      for (let y = minY; y <= maxY; y++) {
-        newTiles.push({
-          id: `${tile.id}-${x}-${y}`,
-          tile,
-          gridX: x,
-          gridY: y,
-          isNew: true,
-        });
-      }
-    }
-
     setGroundTiles((prev) => {
-      // Remove tiles in the area
-      const filtered = prev.filter(t =>
-        !(t.gridX >= minX && t.gridX <= maxX && t.gridY >= minY && t.gridY <= maxY)
-      );
-      const cleared = filtered.map(t => ({ ...t, isNew: false }));
-      const updated = [...cleared, ...newTiles];
+      // Pre-compute new tiles
+      const newTiles: PlacedGroundTile[] = [];
+      for (let x = minX; x <= maxX; x++) {
+        for (let y = minY; y <= maxY; y++) {
+          newTiles.push({
+            id: `${tile.id}-${x}-${y}`,
+            tile,
+            gridX: x,
+            gridY: y,
+            isNew: true,
+          });
+        }
+      }
+
+      // Filter out tiles in the area and clear isNew in one pass
+      const updated = [];
+      for (const t of prev) {
+        if (!(t.gridX >= minX && t.gridX <= maxX && t.gridY >= minY && t.gridY <= maxY)) {
+          updated.push({ ...t, isNew: false });
+        }
+      }
+      updated.push(...newTiles);
+
       saveTiles(updated);
+
+      // Schedule async removal of isNew flag
+      setTimeout(() => {
+        setGroundTiles((current) =>
+          current.map(t => t.isNew ? { ...t, isNew: false } : t)
+        );
+      }, 500);
+
       return updated;
     });
-
-    setTimeout(() => {
-      setGroundTiles((prev) =>
-        prev.map(t => ({ ...t, isNew: false }))
-      );
-    }, 500);
   }, [saveTiles]);
 
   const removeTile = useCallback((gridX: number, gridY: number) => {
@@ -242,24 +314,30 @@ export function useGroundTiles(workspace: Workspace | null, onWorkspaceUpdate?: 
     const maxY = Math.max(startY, endY);
 
     setGroundTiles((prev) => {
-      const tilesToDelete: Array<{ x: number, y: number }> = [];
-      const updated = prev.filter(t => {
+      const tilesToDelete: Array<{ x: number; y: number }> = [];
+      const updated: PlacedGroundTile[] = [];
+
+      // Process removal in single pass
+      for (const t of prev) {
         if (t.gridX >= minX && t.gridX <= maxX && t.gridY >= minY && t.gridY <= maxY) {
           tilesToDelete.push({ x: t.gridX, y: t.gridY });
-          return false;
+        } else {
+          updated.push(t);
         }
-        return true;
-      });
+      }
 
       saveTiles(updated);
 
-      // Delete from API
-      if (workspace) {
-        tilesToDelete.forEach(({ x, y }) => {
-          fetch(`/api/workspaces/${workspace.id}/tiles/${x}/${y}`, {
-            method: "DELETE",
-          }).catch(err => console.error("Failed to delete tile from API:", err));
-        });
+      // Batch API deletions if we have a workspace
+      if (workspace && tilesToDelete.length > 0) {
+        // Use Promise.all for parallel cleanup
+        Promise.all(
+          tilesToDelete.map(({ x, y }) =>
+            fetch(`/api/workspaces/${workspace.id}/tiles/${x}/${y}`, {
+              method: "DELETE",
+            }).catch(err => console.error(`Failed to delete tile at ${x},${y}:`, err))
+          )
+        ).catch(() => {});
       }
 
       return updated;
