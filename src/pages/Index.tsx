@@ -265,23 +265,25 @@ const Index = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </button>
-        <DSTPixiCanvas
-          placedStructures={placedStructures}
-          selectedStructure={canEdit ? selectedStructure : null}
-          selectedId={selectedStructureId}
-          camera={camera}
-          isReadOnly={isReadOnly}
-          onAddStructure={(structure, gridX, gridY) => {
-            if (canEdit) addStructure(structure, gridX, gridY);
-          }}
-          onRemoveStructure={id => { if (canEdit) removeStructure(id); }}
-          onMoveStructure={(id, gridX, gridY) => { if (canEdit) moveStructure(id, gridX, gridY); }}
-          onSelectStructure={setSelectedStructureId}
-          onPan={pan}
-          onZoom={(delta, pivotX, pivotY, screenW, screenH) =>
-            zoomCamera(delta, pivotX, pivotY, screenW, screenH)
-          }
-        />
+        <div className="flex-1 min-w-0 overflow-hidden">
+          <DSTPixiCanvas
+            placedStructures={placedStructures}
+            selectedStructure={canEdit ? selectedStructure : null}
+            selectedId={selectedStructureId}
+            camera={camera}
+            isReadOnly={isReadOnly}
+            onAddStructure={(structure, gridX, gridY) => {
+              if (canEdit) addStructure(structure, gridX, gridY);
+            }}
+            onRemoveStructure={id => { if (canEdit) removeStructure(id); }}
+            onMoveStructure={(id, gridX, gridY) => { if (canEdit) moveStructure(id, gridX, gridY); }}
+            onSelectStructure={setSelectedStructureId}
+            onPan={pan}
+            onZoom={(delta, pivotX, pivotY, screenW, screenH) =>
+              zoomCamera(delta, pivotX, pivotY, screenW, screenH)
+            }
+          />
+        </div>
         <button
           onClick={() => setShowRightSidebar(!showRightSidebar)}
           className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-card border border-border rounded-l-lg p-2 hover:bg-accent transition-colors shadow-lg"

@@ -35,7 +35,7 @@ export function DSTPixiCanvas({
   onPan,
   onZoom,
 }: DSTPixiCanvasProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const appRef = useRef<Application | null>(null)
   const layersRef = useRef<{
     grid: GridLayer
@@ -56,27 +56,32 @@ export function DSTPixiCanvas({
   selectedIdRef.current = selectedId
   selectedStructureRef.current = selectedStructure
 
-  // Suppress unused-variable warnings for callbacks passed as props
   void onRemoveStructure
   void onMoveStructure
   void onSelectStructure
 
-  // Initialize Pixi
   useEffect(() => {
-    if (!canvasRef.current) return
-    const canvas = canvasRef.current
+    if (!containerRef.current) return
+    const container = containerRef.current
     const app = new Application()
+    let destroyed = false
 
     ;(async () => {
       await app.init({
-        canvas,
-        width: canvas.clientWidth || 800,
-        height: canvas.clientHeight || 600,
+        resizeTo: container,
         background: 0x1a1410,
         antialias: true,
         resolution: window.devicePixelRatio || 1,
         autoDensity: true,
       })
+
+      if (destroyed) { app.destroy(true); return }
+
+      // Append Pixi's canvas into our container
+      const pixiCanvas = app.canvas as HTMLCanvasElement
+      pixiCanvas.style.position = 'absolute'
+      pixiCanvas.style.inset = '0'
+      container.appendChild(pixiCanvas)
 
       const grid = new GridLayer()
       const radius = new RadiusLayer()
@@ -91,9 +96,10 @@ export function DSTPixiCanvas({
       layersRef.current = { grid, radius, structures, ghost }
       appRef.current = app
 
-      // Preload all current structure textures
       const ids = structuresRef.current.map(s => s.structure.id)
       await structures.preload(ids)
+
+      if (destroyed) return
 
       app.ticker.add(() => {
         const { width, height } = app.screen
@@ -107,30 +113,17 @@ export function DSTPixiCanvas({
     })()
 
     return () => {
+      destroyed = true
       layersRef.current?.grid.destroy()
       layersRef.current?.radius.destroy()
       layersRef.current?.structures.destroy()
       layersRef.current?.ghost.destroy()
       layersRef.current = null
-      app.destroy()
       appRef.current = null
+      app.destroy(true)
     }
   }, [])
 
-  // Resize observer
-  useEffect(() => {
-    if (!canvasRef.current) return
-    const canvas = canvasRef.current
-    const observer = new ResizeObserver(() => {
-      const app = appRef.current
-      if (!app) return
-      app.renderer.resize(canvas.clientWidth, canvas.clientHeight)
-    })
-    observer.observe(canvas)
-    return () => observer.disconnect()
-  }, [])
-
-  // Preload texture when selected structure changes
   useEffect(() => {
     if (!selectedStructure || !layersRef.current) return
     layersRef.current.ghost.setStructureType(selectedStructure.id)
@@ -138,7 +131,7 @@ export function DSTPixiCanvas({
   }, [selectedStructure?.id])
 
   const getWorldPos = useCallback((e: React.PointerEvent) => {
-    const rect = canvasRef.current!.getBoundingClientRect()
+    const rect = containerRef.current!.getBoundingClientRect()
     return screenToWorld(
       e.clientX - rect.left,
       e.clientY - rect.top,
@@ -164,7 +157,7 @@ export function DSTPixiCanvas({
 
     const layers = layersRef.current
     const selStruct = selectedStructureRef.current
-    if (!layers || !canvasRef.current) return
+    if (!layers || !containerRef.current) return
 
     if (selStruct && !isReadOnly) {
       const world = getWorldPos(e)
@@ -173,7 +166,7 @@ export function DSTPixiCanvas({
         Math.hypot(s.gridX - snapped.x, s.gridY - snapped.y) < 3
       )
       layers.ghost.show()
-      const rect = canvasRef.current.getBoundingClientRect()
+      const rect = containerRef.current.getBoundingClientRect()
       layers.ghost.render(snapped.x, snapped.y, isValid, cameraRef.current, rect.width, rect.height)
     } else {
       layers.ghost.hide()
@@ -185,7 +178,6 @@ export function DSTPixiCanvas({
       isPanning.current = false
       return
     }
-
     if (e.button === 0 && !isReadOnly) {
       const selStruct = selectedStructureRef.current
       if (selStruct) {
@@ -197,8 +189,7 @@ export function DSTPixiCanvas({
   }, [isReadOnly, onAddStructure, getWorldPos])
 
   const handleWheel = useCallback((e: React.WheelEvent) => {
-    if (!canvasRef.current) return
-    const rect = canvasRef.current.getBoundingClientRect()
+    const rect = containerRef.current!.getBoundingClientRect()
     onZoom(e.deltaY, e.clientX - rect.left, e.clientY - rect.top, rect.width, rect.height)
   }, [onZoom])
 
@@ -208,14 +199,9 @@ export function DSTPixiCanvas({
   }, [])
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        width: '100%',
-        height: '100%',
-        display: 'block',
-        cursor: selectedStructure && !isReadOnly ? 'crosshair' : 'default',
-      }}
+    <div
+      ref={containerRef}
+      style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', cursor: selectedStructure && !isReadOnly ? 'crosshair' : 'default' }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
