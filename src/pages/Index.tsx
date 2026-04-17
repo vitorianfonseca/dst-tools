@@ -131,31 +131,31 @@ const Index = () => {
       category: "Tools",
     },
     {
-      key: "e",
-      action: () => {
-        if (canEdit) {
-          setIsErasingTiles(!isErasingTiles);
-          if (!isErasingTiles) {
-            setSelectedGroundTile(null);
-            setSelectedStructure(null);
-          }
-        }
-      },
-      description: "Ativar/desativar borracha",
+      key: "h",
+      action: handleClearSelection,
+      description: "Hand tool (pan)",
       category: "Tools",
     },
     {
-      key: "Delete",
+      key: "e",
       action: () => {
-        // This could be extended to delete selected items
+        if (!canEdit) return;
+        setIsErasingTiles(prev => {
+          const next = !prev;
+          if (next) {
+            setSelectedGroundTile(null);
+            setSelectedStructure(null);
+          }
+          return next;
+        });
       },
-      description: "Delete selected item",
-      category: "Editing",
+      description: "Toggle eraser",
+      category: "Tools",
     },
-  ], [handleUndo, handleRedo, handleClearSelection, canEdit, isErasingTiles]);
+  ], [handleUndo, handleRedo, handleClearSelection, canEdit]);
 
-  // Register keyboard shortcuts
-  useKeyboardShortcuts(shortcuts, canEdit);
+  // Shortcuts always enabled — actions guard canEdit internally
+  useKeyboardShortcuts(shortcuts, true);
 
   // Load saved workspace or auto-select first one
   useEffect(() => {
