@@ -268,7 +268,10 @@ const Index = () => {
         <div className="flex-1 min-w-0 overflow-hidden">
           <DSTPixiCanvas
             placedStructures={placedStructures}
+            groundTiles={groundTiles}
             selectedStructure={canEdit ? selectedStructure : null}
+            selectedGroundTile={canEdit ? selectedGroundTile : null}
+            isErasingTiles={isErasingTiles}
             selectedId={selectedStructureId}
             camera={camera}
             isReadOnly={isReadOnly}
@@ -278,6 +281,8 @@ const Index = () => {
             onRemoveStructure={id => { if (canEdit) removeStructure(id); }}
             onMoveStructure={(id, gridX, gridY) => { if (canEdit) moveStructure(id, gridX, gridY); }}
             onSelectStructure={setSelectedStructureId}
+            onAddTile={(tile, gridX, gridY) => { if (canEdit) addTile(tile, gridX, gridY); }}
+            onRemoveTile={(gridX, gridY) => { if (canEdit) removeTile(gridX, gridY); }}
             onPan={pan}
             onZoom={(delta, pivotX, pivotY, screenW, screenH) =>
               zoomCamera(delta, pivotX, pivotY, screenW, screenH)

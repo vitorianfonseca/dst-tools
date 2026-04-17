@@ -1,16 +1,22 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { Application } from 'pixi.js'
-import { Camera, screenToWorld } from './coordinateSystem'
+import { Camera, screenToWorld, UNITS_PER_TILE } from './coordinateSystem'
+import { GroundLayer } from './layers/GroundLayer'
 import { GridLayer } from './layers/GridLayer'
 import { RadiusLayer } from './layers/RadiusLayer'
 import { StructureLayer } from './layers/StructureLayer'
 import { GhostLayer } from './layers/GhostLayer'
 import { PlacedStructure } from '@/hooks/usePlacedStructures'
+import { PlacedGroundTile } from '@/hooks/useGroundTiles'
 import { Structure } from '@/data/structures'
+import { GroundTile } from '@/data/groundTiles'
 
 interface DSTPixiCanvasProps {
   placedStructures: PlacedStructure[]
+  groundTiles: PlacedGroundTile[]
   selectedStructure: Structure | null
+  selectedGroundTile: GroundTile | null
+  isErasingTiles: boolean
   selectedId: string | null
   camera: Camera
   isReadOnly: boolean
@@ -18,13 +24,18 @@ interface DSTPixiCanvasProps {
   onRemoveStructure: (id: string) => void
   onMoveStructure: (id: string, gridX: number, gridY: number) => void
   onSelectStructure: (id: string | null) => void
+  onAddTile: (tile: GroundTile, gridX: number, gridY: number) => void
+  onRemoveTile: (gridX: number, gridY: number) => void
   onPan: (dx: number, dy: number) => void
   onZoom: (delta: number, pivotX: number, pivotY: number, screenW: number, screenH: number) => void
 }
 
 export function DSTPixiCanvas({
   placedStructures,
+  groundTiles,
   selectedStructure,
+  selectedGroundTile,
+  isErasingTiles,
   selectedId,
   camera,
   isReadOnly,
@@ -32,12 +43,15 @@ export function DSTPixiCanvas({
   onRemoveStructure,
   onMoveStructure,
   onSelectStructure,
+  onAddTile,
+  onRemoveTile,
   onPan,
   onZoom,
 }: DSTPixiCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const appRef = useRef<Application | null>(null)
   const layersRef = useRef<{
+    ground: GroundLayer
     grid: GridLayer
     radius: RadiusLayer
     structures: StructureLayer
@@ -45,16 +59,24 @@ export function DSTPixiCanvas({
   } | null>(null)
 
   const isPanning = useRef(false)
+  const isPainting = useRef(false)
+  const lastPaintedCell = useRef<{ x: number; y: number } | null>(null)
   const lastPtr = useRef({ x: 0, y: 0 })
   const cameraRef = useRef(camera)
   const structuresRef = useRef(placedStructures)
+  const groundTilesRef = useRef(groundTiles)
   const selectedIdRef = useRef(selectedId)
   const selectedStructureRef = useRef(selectedStructure)
+  const selectedGroundTileRef = useRef(selectedGroundTile)
+  const isErasingRef = useRef(isErasingTiles)
 
   cameraRef.current = camera
   structuresRef.current = placedStructures
+  groundTilesRef.current = groundTiles
   selectedIdRef.current = selectedId
   selectedStructureRef.current = selectedStructure
+  selectedGroundTileRef.current = selectedGroundTile
+  isErasingRef.current = isErasingTiles
 
   void onRemoveStructure
   void onMoveStructure
@@ -77,27 +99,33 @@ export function DSTPixiCanvas({
 
       if (destroyed) { app.destroy(true); return }
 
-      // Append Pixi's canvas into our container
       const pixiCanvas = app.canvas as HTMLCanvasElement
       pixiCanvas.style.position = 'absolute'
       pixiCanvas.style.inset = '0'
       container.appendChild(pixiCanvas)
 
+      const ground = new GroundLayer()
       const grid = new GridLayer()
       const radius = new RadiusLayer()
       const structures = new StructureLayer()
       const ghost = new GhostLayer()
 
+      // Ground below grid, structures above
+      app.stage.addChild(ground.container)
       app.stage.addChild(grid.container)
       app.stage.addChild(radius.container)
       app.stage.addChild(structures.container)
       app.stage.addChild(ghost.container)
 
-      layersRef.current = { grid, radius, structures, ghost }
+      layersRef.current = { ground, grid, radius, structures, ghost }
       appRef.current = app
 
-      const ids = structuresRef.current.map(s => s.structure.id)
-      await structures.preload(ids)
+      // Preload initial textures
+      const structureIds = structuresRef.current.map(s => s.structure.id)
+      await structures.preload(structureIds)
+
+      const uniqueTiles = [...new Map(groundTilesRef.current.map(t => [t.tile.id, t.tile])).values()]
+      await Promise.all(uniqueTiles.map(t => ground.preload(t.image, t.id)))
 
       if (destroyed) return
 
@@ -105,7 +133,9 @@ export function DSTPixiCanvas({
         const { width, height } = app.screen
         const cam = cameraRef.current
         const structs = structuresRef.current
+        const gTiles = groundTilesRef.current
         const selId = selectedIdRef.current
+        ground.render(gTiles, cam, width, height)
         grid.render(cam, width, height)
         radius.render(structs, cam, width, height)
         structures.render(structs, selId, cam, width, height)
@@ -114,6 +144,7 @@ export function DSTPixiCanvas({
 
     return () => {
       destroyed = true
+      layersRef.current?.ground.destroy()
       layersRef.current?.grid.destroy()
       layersRef.current?.radius.destroy()
       layersRef.current?.structures.destroy()
@@ -124,11 +155,18 @@ export function DSTPixiCanvas({
     }
   }, [])
 
+  // Preload texture when selected structure changes
   useEffect(() => {
     if (!selectedStructure || !layersRef.current) return
     layersRef.current.ghost.setStructureType(selectedStructure.id)
     layersRef.current.structures.preload([selectedStructure.id])
   }, [selectedStructure?.id])
+
+  // Preload tile texture when selected tile changes
+  useEffect(() => {
+    if (!selectedGroundTile || !layersRef.current) return
+    layersRef.current.ground.preload(selectedGroundTile.image, selectedGroundTile.id)
+  }, [selectedGroundTile?.id])
 
   const getWorldPos = useCallback((e: React.PointerEvent) => {
     const rect = containerRef.current!.getBoundingClientRect()
@@ -141,18 +179,58 @@ export function DSTPixiCanvas({
     )
   }, [])
 
+  const worldToTileCoords = useCallback((worldX: number, worldY: number) => ({
+    x: Math.floor(worldX / UNITS_PER_TILE),
+    y: Math.floor(worldY / UNITS_PER_TILE),
+  }), [])
+
+  const paintTileAt = useCallback((worldX: number, worldY: number) => {
+    const tile = selectedGroundTileRef.current
+    const erasing = isErasingRef.current
+    const { x, y } = worldToTileCoords(worldX, worldY)
+
+    const last = lastPaintedCell.current
+    if (last && last.x === x && last.y === y) return
+    lastPaintedCell.current = { x, y }
+
+    if (erasing) {
+      onRemoveTile(x, y)
+    } else if (tile) {
+      onAddTile(tile, x, y)
+    }
+  }, [onAddTile, onRemoveTile, worldToTileCoords])
+
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     if (e.button === 1 || e.button === 2) {
       isPanning.current = true
       lastPtr.current = { x: e.clientX, y: e.clientY }
       e.currentTarget.setPointerCapture(e.pointerId)
+      return
     }
-  }, [])
+
+    if (e.button === 0 && !isReadOnly) {
+      const tile = selectedGroundTileRef.current
+      const erasing = isErasingRef.current
+      if (tile || erasing) {
+        isPainting.current = true
+        lastPaintedCell.current = null
+        e.currentTarget.setPointerCapture(e.pointerId)
+        const world = getWorldPos(e)
+        paintTileAt(world.x, world.y)
+      }
+    }
+  }, [isReadOnly, getWorldPos, paintTileAt])
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
     if (isPanning.current) {
       onPan(-(e.clientX - lastPtr.current.x), -(e.clientY - lastPtr.current.y))
       lastPtr.current = { x: e.clientX, y: e.clientY }
+    }
+
+    if (isPainting.current && !isReadOnly) {
+      const world = getWorldPos(e)
+      paintTileAt(world.x, world.y)
+      return
     }
 
     const layers = layersRef.current
@@ -171,13 +249,20 @@ export function DSTPixiCanvas({
     } else {
       layers.ghost.hide()
     }
-  }, [isReadOnly, onPan, getWorldPos])
+  }, [isReadOnly, onPan, getWorldPos, paintTileAt])
 
   const handlePointerUp = useCallback((e: React.PointerEvent) => {
+    if (isPainting.current) {
+      isPainting.current = false
+      lastPaintedCell.current = null
+      return
+    }
+
     if (isPanning.current && (e.button === 1 || e.button === 2)) {
       isPanning.current = false
       return
     }
+
     if (e.button === 0 && !isReadOnly) {
       const selStruct = selectedStructureRef.current
       if (selStruct) {
@@ -195,13 +280,18 @@ export function DSTPixiCanvas({
 
   const handlePointerLeave = useCallback(() => {
     isPanning.current = false
+    isPainting.current = false
+    lastPaintedCell.current = null
     layersRef.current?.ghost.hide()
   }, [])
+
+  const hasTileMode = (selectedGroundTile || isErasingTiles) && !isReadOnly
+  const cursor = selectedStructure && !isReadOnly ? 'crosshair' : hasTileMode ? 'cell' : 'default'
 
   return (
     <div
       ref={containerRef}
-      style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', cursor: selectedStructure && !isReadOnly ? 'crosshair' : 'default' }}
+      style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', cursor }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
