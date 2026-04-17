@@ -1,0 +1,74 @@
+<h2>Como queres integrar o vídeo no hero?</h2>
+<p class="subtitle">O vídeo tem o personagem com a tocha — há várias formas de o colocar</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#1a1410;padding:16px;min-height:180px;display:flex;flex-direction:column;gap:8px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;height:140px;">
+        <div style="background:#2a2018;border-radius:4px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;gap:4px;">
+          <div style="background:#d4823b;height:8px;border-radius:2px;width:60%;"></div>
+          <div style="background:#555;height:5px;border-radius:2px;width:90%;"></div>
+          <div style="background:#555;height:5px;border-radius:2px;width:75%;"></div>
+          <div style="display:flex;gap:4px;margin-top:4px;">
+            <div style="background:#d4823b;height:16px;border-radius:2px;flex:1;"></div>
+            <div style="background:#444;height:16px;border-radius:2px;flex:1;"></div>
+          </div>
+        </div>
+        <div style="background:#1a1410;border-radius:4px;display:flex;align-items:center;justify-content:center;border:2px solid #d4823b44;">
+          <div style="font-size:36px;">🎬</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Substituir a imagem pelo vídeo</h3>
+      <p>O vídeo ocupa o lado direito, onde está a imagem atualmente. Autoplay, loop, muted. Solução mais simples.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#1a1410;padding:16px;min-height:180px;display:flex;flex-direction:column;gap:8px;">
+      <div style="position:relative;height:140px;border-radius:4px;overflow:hidden;">
+        <div style="position:absolute;inset:0;background:linear-gradient(135deg,#2a1a0a,#1a1410);"></div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+          <div style="font-size:48px;filter:drop-shadow(0 0 20px #d4823b);">🔦</div>
+        </div>
+        <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,transparent 30%,rgba(0,0,0,0.7) 100%);"></div>
+        <div style="position:absolute;bottom:16px;left:16px;right:16px;">
+          <div style="background:#d4823b;height:8px;border-radius:2px;width:50%;margin-bottom:4px;"></div>
+          <div style="background:#fff5;height:5px;border-radius:2px;width:70%;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Vídeo em fullscreen como fundo do hero</h3>
+      <p>O vídeo cobre todo o hero como background. O texto fica sobreposto. Impacto visual máximo.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#1a1410;padding:16px;min-height:180px;display:flex;flex-direction:column;gap:8px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;height:140px;">
+        <div style="background:#2a2018;border-radius:4px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;gap:4px;">
+          <div style="background:#d4823b;height:8px;border-radius:2px;width:60%;"></div>
+          <div style="background:#555;height:5px;border-radius:2px;width:90%;"></div>
+          <div style="background:#555;height:5px;border-radius:2px;width:75%;"></div>
+          <div style="display:flex;gap:4px;margin-top:4px;">
+            <div style="background:#d4823b;height:16px;border-radius:2px;flex:1;"></div>
+            <div style="background:#444;height:16px;border-radius:2px;flex:1;"></div>
+          </div>
+        </div>
+        <div style="background:#1a1410;border-radius:4px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+          <div style="font-size:36px;filter:drop-shadow(0 0 15px #d4823b);position:relative;z-index:1;">🔦</div>
+          <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 60%,#d4823b33 0%,transparent 70%);"></div>
+          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#d4823b88,transparent);"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Vídeo no lado direito com efeito de luz</h3>
+      <p>Como o A, mas com glow/luz ambiente à volta do vídeo que simula a tocha a iluminar. Efeito mais dramático.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:16px;">Clica numa opção ou responde no terminal</p>

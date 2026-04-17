@@ -1,0 +1,84 @@
+<h2>Design: Sistema de Coordenadas DST</h2>
+<p class="subtitle">O núcleo de tudo — se isto estiver certo, o resto funciona</p>
+
+<div class="section">
+  <h3>Como o DST mede o mundo</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;">
+    <div style="background:#2a1f14;border-radius:6px;padding:12px;">
+      <div style="color:#d4823b;font-size:11px;font-weight:bold;margin-bottom:8px;">🎮 NO JOGO</div>
+      <div style="font-size:11px;color:#fff9;line-height:1.8;">
+        • 1 <strong style="color:#fff;">tile</strong> = 4 × 4 unidades de jogo<br>
+        • Estruturas colocadas em coordenadas <strong style="color:#fff;">X, Y</strong> contínuas<br>
+        • Não há snap obrigatório ao grid<br>
+        • Fire Pit tem raio de <strong style="color:#d4823b;">~3.5 unidades</strong> de calor<br>
+        • Lightning Rod cobre <strong style="color:#d4823b;">~16 unidades</strong> de raio<br>
+        • Ice Flingomatic: <strong style="color:#d4823b;">~12 unidades</strong>
+      </div>
+    </div>
+    <div style="background:#2a1f14;border-radius:6px;padding:12px;">
+      <div style="color:#64b5f6;font-size:11px;font-weight:bold;margin-bottom:8px;">🖥️ NO PLANNER (novo)</div>
+      <div style="font-size:11px;color:#fff9;line-height:1.8;">
+        • 1 unidade de jogo = <strong style="color:#fff;">32px</strong> no ecrã (zoom 1x)<br>
+        • Grid visual = 4 unidades (128px) por tile<br>
+        • Snap <strong style="color:#fff;">opcional</strong> ao tile ou livre<br>
+        • Raios desenhados em escala real<br>
+        • Zoom preserva proporções<br>
+        • Pan livre com mouse/touchpad
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Camadas do canvas (Pixi.js)</h3>
+  <div style="display:flex;flex-direction:column;gap:4px;margin-top:12px;">
+    <div style="background:#1a2a3a;border:1px solid #2a4a6a;border-radius:4px;padding:8px 12px;display:flex;align-items:center;gap:10px;">
+      <div style="background:#2a4a6a;color:#64b5f6;font-size:10px;padding:2px 8px;border-radius:3px;min-width:60px;text-align:center;">Layer 5</div>
+      <div style="font-size:11px;color:#fff;">Ghost Preview — estrutura translúcida a seguir o cursor</div>
+    </div>
+    <div style="background:#1a2a1a;border:1px solid #2a5a2a;border-radius:4px;padding:8px 12px;display:flex;align-items:center;gap:10px;">
+      <div style="background:#2a5a2a;color:#8bc34a;font-size:10px;padding:2px 8px;border-radius:3px;min-width:60px;text-align:center;">Layer 4</div>
+      <div style="font-size:11px;color:#fff;">Structures — sprites das estruturas, ordenadas por profundidade (Y-sort)</div>
+    </div>
+    <div style="background:#2a1a2a;border:1px solid #5a2a5a;border-radius:4px;padding:8px 12px;display:flex;align-items:center;gap:10px;">
+      <div style="background:#5a2a5a;color:#ce93d8;font-size:10px;padding:2px 8px;border-radius:3px;min-width:60px;text-align:center;">Layer 3</div>
+      <div style="font-size:11px;color:#fff;">Radii — círculos de raio (calor, alcance, proteção) com alpha baixo</div>
+    </div>
+    <div style="background:#2a2a1a;border:1px solid #5a5a2a;border-radius:4px;padding:8px 12px;display:flex;align-items:center;gap:10px;">
+      <div style="background:#5a5a2a;color:#fff176;font-size:10px;padding:2px 8px;border-radius:3px;min-width:60px;text-align:center;">Layer 2</div>
+      <div style="font-size:11px;color:#fff;">Grid — linhas de tile (4 unidades), com opacidade baixa</div>
+    </div>
+    <div style="background:#2a1f14;border:1px solid #5a3a2a;border-radius:4px;padding:8px 12px;display:flex;align-items:center;gap:10px;">
+      <div style="background:#5a3a2a;color:#d4823b;font-size:10px;padding:2px 8px;border-radius:3px;min-width:60px;text-align:center;">Layer 1</div>
+      <div style="font-size:11px;color:#fff;">Ground — tiles de terreno (grass, dirt, stone...)</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Raios de influência das estruturas principais</h3>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;">
+    <div style="background:#2a1f14;border-radius:4px;padding:8px;text-align:center;">
+      <div style="font-size:20px;margin-bottom:4px;">🔥</div>
+      <div style="font-size:10px;color:#d4823b;font-weight:bold;">Fire Pit</div>
+      <div style="font-size:10px;color:#fff8;">Calor: 3.5u<br>Luz: 5u</div>
+    </div>
+    <div style="background:#2a1f14;border-radius:4px;padding:8px;text-align:center;">
+      <div style="font-size:20px;margin-bottom:4px;">⚡</div>
+      <div style="font-size:10px;color:#64b5f6;font-weight:bold;">Lightning Rod</div>
+      <div style="font-size:10px;color:#fff8;">Proteção: 16u</div>
+    </div>
+    <div style="background:#2a1f14;border-radius:4px;padding:8px;text-align:center;">
+      <div style="font-size:20px;margin-bottom:4px;">❄️</div>
+      <div style="font-size:10px;color:#81d4fa;font-weight:bold;">Ice Flingomatic</div>
+      <div style="font-size:10px;color:#fff8;">Alcance: 12u</div>
+    </div>
+    <div style="background:#2a1f14;border-radius:4px;padding:8px;text-align:center;">
+      <div style="font-size:20px;margin-bottom:4px;">🌿</div>
+      <div style="font-size:10px;color:#8bc34a;font-weight:bold;">Garden Digamajig</div>
+      <div style="font-size:10px;color:#fff8;">Área: 3×3 tiles</div>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:16px;">Este design parece correto? Respondes no terminal e avançamos para a arquitetura Pixi.js</p>

@@ -1,0 +1,28 @@
+<h2>Qual é a prioridade para o novo builder?</h2>
+<p class="subtitle">Isto define toda a arquitetura — escolhe o que é mais importante</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Espaçamentos fiéis ao jogo</h3>
+      <p>O foco é que as distâncias entre estruturas correspondam exatamente às do DST. Visual mais simples, mas o que planeares é reproduzível no jogo.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Visual igual ao DST + espaçamentos corretos</h3>
+      <p>Perspetiva e estilo visual que imita o jogo (top-down ligeiramente inclinado, sprites do jogo), E espaçamentos corretos. Mais complexo de implementar.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Regras de colocação + raios de influência</h3>
+      <p>Estruturas validam distâncias mínimas e mostram raios (calor do fogo, área da farm, alcance do lightning rod). Espaçamento correto é obrigatório aqui também.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:16px;">Podes escolher mais do que um — clica ou responde no terminal</p>

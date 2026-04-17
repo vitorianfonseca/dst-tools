@@ -15,7 +15,6 @@ import Community from "./pages/Community";
 import NotFound from "./pages/NotFound";
 import Guides from "./pages/Guides";
 import CanvasEditor from "./pages/CanvasEditor";
-import DSTBuildingDemo from "./pages/DSTBuildingDemo";
 const queryClient = new QueryClient();
 
 function AnimatedRoutes() {
@@ -31,8 +30,7 @@ function AnimatedRoutes() {
         <Route path="/community" element={<PageTransition><Community /></PageTransition>} />
         <Route path="/guides" element={<PageTransition><Guides /></PageTransition>} />
         <Route path="/canvas-editor" element={<CanvasEditor />} />
-        <Route path="/dst-building" element={<DSTBuildingDemo />} />
-        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+<Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>
     </AnimatePresence>
   );

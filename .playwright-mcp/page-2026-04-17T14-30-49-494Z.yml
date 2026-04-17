@@ -1,0 +1,919 @@
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - region "Notifications alt+T"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - link "DST Tools Plan your survival" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - img [ref=e7]
+        - generic [ref=e9]:
+          - generic [ref=e10]: DST Tools
+          - generic [ref=e11]: Plan your survival
+      - generic [ref=e12]:
+        - generic [ref=e13]:
+          - button "Undo (Ctrl+Z)" [disabled]:
+            - img
+          - button "Redo (Ctrl+Shift+Z)" [disabled]:
+            - img
+        - button "Atalhos de teclado" [ref=e14] [cursor=pointer]:
+          - img
+        - button "Faça login" [disabled]:
+          - generic: Faça login
+        - button "Entrar" [ref=e15] [cursor=pointer]
+    - generic [ref=e16]:
+      - complementary:
+        - generic:
+          - heading "Structures(read only)" [level=2]
+          - generic:
+            - img
+            - textbox "Search structures..."
+        - generic:
+          - generic:
+            - button "All"
+            - button "🔬 Science":
+              - generic: 🔬
+              - text: Science
+            - button "🍲 Food":
+              - generic: 🍲
+              - text: Food
+            - button "🔥 Light":
+              - generic: 🔥
+              - text: Light
+            - button "⛺ Survival":
+              - generic: ⛺
+              - text: Survival
+            - button "⚒️ Refining":
+              - generic: ⚒️
+              - text: Refining
+            - button "🧱 Structures":
+              - generic: 🧱
+              - text: Structures
+            - button "🌾 Farming":
+              - generic: 🌾
+              - text: Farming
+            - button "🌑 Magic":
+              - generic: 🌑
+              - text: Magic
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - img "Science Machine"
+              - generic:
+                - generic: Science Machine
+                - generic: Unlocks tier 1 crafting recipes
+            - generic:
+              - generic: 1× Gold Nugget
+              - generic: 4× Log
+              - generic: 4× Rocks
+          - generic:
+            - generic:
+              - generic:
+                - img "Alchemy Engine"
+              - generic:
+                - generic: Alchemy Engine
+                - generic: Unlocks tier 2 crafting recipes
+            - generic:
+              - generic: 4× Boards
+              - generic: 2× Cut Stone
+              - generic: 2× Electrical Doodad
+          - generic:
+            - generic:
+              - generic:
+                - img "Prestihatitator"
+              - generic:
+                - generic: Prestihatitator
+                - generic: Unlocks magic tier crafting
+            - generic:
+              - generic: 4× Rabbit
+              - generic: 4× Boards
+              - generic: 1× Top Hat
+          - generic:
+            - generic:
+              - generic:
+                - img "Think Tank"
+              - generic:
+                - generic: Think Tank
+                - generic: Unlocks nautical prototyping
+            - generic:
+              - generic: 4× Boards
+              - generic: 2× Cut Stone
+              - generic: 2× Seashell
+          - generic:
+            - generic:
+              - generic:
+                - img "Cartographer's Desk"
+              - generic:
+                - generic: Cartographer's Desk
+                - generic: Craft maps to reveal the world
+            - generic:
+              - generic: 1× Boards
+              - generic: 2× Papyrus
+          - generic:
+            - generic:
+              - generic:
+                - img "Tackle Receptacle"
+              - generic:
+                - generic: Tackle Receptacle
+                - generic: Craft tackle for fishing
+            - generic:
+              - generic: 2× Boards
+              - generic: 1× Rope
+              - generic: 1× Cut Stone
+          - generic:
+            - generic:
+              - generic:
+                - img "Ancient Pseudoscience Station"
+              - generic:
+                - generic: Ancient Pseudoscience Station
+                - generic: Unlocks ancient crafting recipes
+            - generic:
+              - generic: 4× Thulecite
+              - generic: 2× Purple Gem
+          - generic:
+            - generic:
+              - generic:
+                - img "Shadow Manipulator"
+              - generic:
+                - generic: Shadow Manipulator
+                - generic: Unlocks ancient magic crafting
+            - generic:
+              - generic: 3× Living Log
+              - generic: 1× Purple Gem
+              - generic: 7× Nightmare Fuel
+          - generic:
+            - generic:
+              - generic:
+                - img "Night Light"
+              - generic:
+                - generic: Night Light
+                - generic: Sinister light source
+            - generic:
+              - generic: 4× Nightmare Fuel
+              - generic: 1× Red Gem
+          - generic:
+            - generic:
+              - generic:
+                - img "Meat Effigy"
+              - generic:
+                - generic: Meat Effigy
+                - generic: One-time resurrection at base
+            - generic:
+              - generic: 4× Boards
+              - generic: 4× Meat
+              - generic: 4× Beard Hair
+          - generic:
+            - generic:
+              - generic:
+                - img "Telelocator Focus"
+              - generic:
+                - generic: Telelocator Focus
+                - generic: Anchor for teleportation
+            - generic:
+              - generic: 4× Gold Nugget
+              - generic: 2× Purple Gem
+              - generic: 8× Nightmare Fuel
+          - generic:
+            - generic:
+              - generic:
+                - img "Moon Dial"
+              - generic:
+                - generic: Moon Dial
+                - generic: Tracks the moon cycle
+            - generic:
+              - generic: 8× Moon Rock
+              - generic: 1× Purple Gem
+          - generic:
+            - generic:
+              - generic:
+                - img "Crock Pot"
+              - generic:
+                - generic: Crock Pot
+                - generic: Cook delicious meals from ingredients
+            - generic:
+              - generic: 3× Cut Stone
+              - generic: 6× Charcoal
+              - generic: 6× Twigs
+          - generic:
+            - generic:
+              - generic:
+                - img "Ice Box"
+              - generic:
+                - generic: Ice Box
+                - generic: Keeps food fresh for longer
+            - generic:
+              - generic: 2× Boards
+              - generic: 2× Gold Nugget
+              - generic: 1× Gears
+          - generic:
+            - generic:
+              - generic:
+                - img "Drying Rack"
+              - generic:
+                - generic: Drying Rack
+                - generic: Preserves meat and fish
+            - generic:
+              - generic: 3× Twigs
+              - generic: 2× Charcoal
+              - generic: 3× Rope
+          - generic:
+            - generic:
+              - generic:
+                - img "Birdcage"
+              - generic:
+                - generic: Birdcage
+                - generic: Feed birds to convert foods
+            - generic:
+              - generic: 2× Papyrus
+              - generic: 6× Gold Nugget
+              - generic: 2× Seeds
+          - generic:
+            - generic:
+              - generic:
+                - img "Salt Box"
+              - generic:
+                - generic: Salt Box
+                - generic: Preserves food with salt
+            - generic:
+              - generic: 2× Boards
+              - generic: 3× Salt
+              - generic: 1× Blue Gem
+          - generic:
+            - generic:
+              - generic:
+                - img "Salt Rack"
+              - generic:
+                - generic: Salt Rack
+                - generic: Produces salt from sea water
+            - generic:
+              - generic: 2× Boards
+              - generic: 1× Rope
+              - generic: 1× Cut Stone
+          - generic:
+            - generic:
+              - generic:
+                - img "Campfire"
+              - generic:
+                - generic: Campfire
+                - generic: Basic light and warmth source
+            - generic:
+              - generic: 3× Cut Grass
+              - generic: 2× Log
+          - generic:
+            - generic:
+              - generic:
+                - img "Fire Pit"
+              - generic:
+                - generic: Fire Pit
+                - generic: Permanent fire source for your base
+            - generic:
+              - generic: 2× Log
+              - generic: 12× Rocks
+          - generic:
+            - generic:
+              - generic:
+                - img "Endothermic Fire Pit"
+              - generic:
+                - generic: Endothermic Fire Pit
+                - generic: Cools you down in summer
+            - generic:
+              - generic: 2× Nitre
+              - generic: 4× Cut Stone
+              - generic: 2× Electrical Doodad
+          - generic:
+            - generic:
+              - generic:
+                - img "Mushroom Light"
+              - generic:
+                - generic: Mushroom Light
+                - generic: Colorful fungal lighting
+            - generic:
+              - generic: 1× Rope
+              - generic: 2× Cut Stone
+              - generic: 1× Shroom Skin
+          - generic:
+            - generic:
+              - generic:
+                - img "Mushroom Light (Bloom)"
+              - generic:
+                - generic: Mushroom Light (Bloom)
+                - generic: Bright fungal lighting
+            - generic:
+              - generic: 1× Rope
+              - generic: 2× Cut Stone
+              - generic: 1× Shroom Skin
+          - generic:
+            - generic:
+              - generic:
+                - img "Scaled Furnace"
+              - generic:
+                - generic: Scaled Furnace
+                - generic: Warmth that never goes out
+            - generic:
+              - generic: 2× Red Gem
+              - generic: 10× Charcoal
+              - generic: 1× Dragonfly Scales
+          - generic:
+            - generic:
+              - generic:
+                - img "Tent"
+              - generic:
+                - generic: Tent
+                - generic: Sleep and restore health/sanity
+            - generic:
+              - generic: 6× Silk
+              - generic: 6× Twigs
+              - generic: 3× Rope
+          - generic:
+            - generic:
+              - generic:
+                - img "Siesta Lean-to"
+              - generic:
+                - generic: Siesta Lean-to
+                - generic: Sleep during summer heat
+            - generic:
+              - generic: 4× Boards
+              - generic: 3× Rope
+              - generic: 6× Cut Grass
+          - generic:
+            - generic:
+              - generic:
+                - img "Ice Flingomatic"
+              - generic:
+                - generic: Ice Flingomatic
+                - generic: Extinguishes fires and chills
+            - generic:
+              - generic: 2× Gears
+              - generic: 15× Ice
+              - generic: 2× Electrical Doodad
+          - generic:
+            - generic:
+              - generic:
+                - img "Rainometer"
+              - generic:
+                - generic: Rainometer
+                - generic: Measures upcoming rain
+            - generic:
+              - generic: 1× Boards
+              - generic: 2× Gold Nugget
+              - generic: 1× Rope
+          - generic:
+            - generic:
+              - generic:
+                - img "Directional Sign"
+              - generic:
+                - generic: Directional Sign
+                - generic: Marks points of interest
+            - generic:
+              - generic: 2× Boards
+              - generic: 2× Charcoal
+          - generic:
+            - generic:
+              - generic:
+                - img "Chest"
+              - generic:
+                - generic: Chest
+                - generic: Store items safely
+            - generic:
+              - generic: 3× Boards
+          - generic:
+            - generic:
+              - generic:
+                - img "Scaled Chest"
+              - generic:
+                - generic: Scaled Chest
+                - generic: Fireproof storage
+            - generic:
+              - generic: 1× Dragonfly Scales
+              - generic: 2× Boards
+              - generic: 8× Cut Stone
+          - generic:
+            - generic:
+              - generic:
+                - img "Sign"
+              - generic:
+                - generic: Sign
+                - generic: Write notes for your base
+            - generic:
+              - generic: 1× Boards
+              - generic: 1× Charcoal
+          - generic:
+            - generic:
+              - generic:
+                - img "Mini Sign"
+              - generic:
+                - generic: Mini Sign
+                - generic: Label containers and farms
+            - generic:
+              - generic: 1× Boards
+              - generic: 1× Charcoal
+          - generic:
+            - generic:
+              - generic:
+                - img "Fence"
+              - generic:
+                - generic: Fence
+                - generic: Low barrier for animals
+            - generic:
+              - generic: 1× Boards
+              - generic: 1× Rope
+          - generic:
+            - generic:
+              - generic:
+                - img "Fence Gate"
+              - generic:
+                - generic: Fence Gate
+                - generic: Gate for fences
+            - generic:
+              - generic: 2× Boards
+              - generic: 1× Rope
+          - generic:
+            - generic:
+              - generic:
+                - img "Wood Wall"
+              - generic:
+                - generic: Wood Wall
+                - generic: Basic defensive wall
+            - generic:
+              - generic: 2× Boards
+          - generic:
+            - generic:
+              - generic:
+                - img "Stone Wall"
+              - generic:
+                - generic: Stone Wall
+                - generic: Stronger defensive wall
+            - generic:
+              - generic: 2× Cut Stone
+          - generic:
+            - generic:
+              - generic:
+                - img "Hay Wall"
+              - generic:
+                - generic: Hay Wall
+                - generic: Temporary barrier
+            - generic:
+              - generic: 4× Cut Grass
+              - generic: 2× Twigs
+          - generic:
+            - generic:
+              - generic: 🏛️
+              - generic:
+                - generic: Marble Wall
+                - generic: Very strong defensive wall
+            - generic:
+              - generic: 2× Marble
+          - generic:
+            - generic:
+              - generic:
+                - img "Thulecite Wall"
+              - generic:
+                - generic: Thulecite Wall
+                - generic: Ancient defensive wall
+            - generic:
+              - generic: 2× Thulecite
+          - generic:
+            - generic:
+              - generic:
+                - img "Wood Gate"
+              - generic:
+                - generic: Wood Gate
+                - generic: Gate for wood walls
+            - generic:
+              - generic: 4× Boards
+              - generic: 2× Rope
+          - generic:
+            - generic:
+              - generic:
+                - img "Tooth Trap"
+              - generic:
+                - generic: Tooth Trap
+                - generic: Damages nearby enemies
+            - generic:
+              - generic: 1× Log
+              - generic: 1× Rope
+              - generic: 1× Hound Tooth
+          - generic:
+            - generic:
+              - generic:
+                - img "Houndius Shootius"
+              - generic:
+                - generic: Houndius Shootius
+                - generic: Automated defense turret
+            - generic:
+              - generic: 5× Thulecite
+              - generic: 1× Red Gem
+              - generic: 1× Hound Tooth
+          - generic:
+            - generic:
+              - generic:
+                - img "Lightning Rod"
+              - generic:
+                - generic: Lightning Rod
+                - generic: Protects base from lightning
+            - generic:
+              - generic: 4× Cut Stone
+              - generic: 2× Gold Nugget
+          - generic:
+            - generic:
+              - generic:
+                - img "Pig House"
+              - generic:
+                - generic: Pig House
+                - generic: Shelter for pigs
+            - generic:
+              - generic: 4× Boards
+              - generic: 3× Cut Stone
+              - generic: 4× Pig Skin
+          - generic:
+            - generic:
+              - generic:
+                - img "Rabbit Hutch"
+              - generic:
+                - generic: Rabbit Hutch
+                - generic: Homes for bunnymen
+            - generic:
+              - generic: 4× Boards
+              - generic: 10× Carrot
+              - generic: 4× Manure
+          - generic:
+            - generic:
+              - generic:
+                - img "Potted Fern"
+              - generic:
+                - generic: Potted Fern
+                - generic: Decorative plant
+            - generic:
+              - generic: 1× Fertilizer
+              - generic: 1× Papyrus
+          - generic:
+            - generic:
+              - generic:
+                - img "Basic Farm"
+              - generic:
+                - generic: Basic Farm
+                - generic: Grow crops
+            - generic:
+              - generic: 8× Cut Grass
+              - generic: 4× Manure
+              - generic: 4× Log
+          - generic:
+            - generic:
+              - generic:
+                - img "Improved Farm"
+              - generic:
+                - generic: Improved Farm
+                - generic: Grow crops faster
+            - generic:
+              - generic: 10× Cut Grass
+              - generic: 6× Manure
+              - generic: 4× Rocks
+          - generic:
+            - generic:
+              - generic:
+                - img "Garden Digamajig"
+              - generic:
+                - generic: Garden Digamajig
+                - generic: Prepare farm soil
+            - generic:
+              - generic: 3× Boards
+              - generic: 2× Rope
+              - generic: 2× Flint
+          - generic:
+            - generic:
+              - generic:
+                - img "Composting Bin"
+              - generic:
+                - generic: Composting Bin
+                - generic: Turns organic waste into compost
+            - generic:
+              - generic: 3× Boards
+              - generic: 1× Rot
+              - generic: 1× Cut Grass
+          - generic:
+            - generic:
+              - generic:
+                - img "Bee Box"
+              - generic:
+                - generic: Bee Box
+                - generic: Produces honey
+            - generic:
+              - generic: 2× Boards
+              - generic: 1× Honeycomb
+              - generic: 4× Stinger
+          - generic:
+            - generic:
+              - generic:
+                - img "Mushroom Planter"
+              - generic:
+                - generic: Mushroom Planter
+                - generic: Grow mushrooms
+            - generic:
+              - generic: 8× Rot
+              - generic: 4× Log
+              - generic: 2× Cut Stone
+          - generic:
+            - generic:
+              - generic:
+                - img "Salt Lick"
+              - generic:
+                - generic: Salt Lick
+                - generic: Attracts beefalo near your base
+            - generic:
+              - generic: 2× Boards
+              - generic: 4× Rocks
+              - generic: 2× Nitre
+          - generic:
+            - generic:
+              - generic:
+                - img "Friendly Scarecrow"
+              - generic:
+                - generic: Friendly Scarecrow
+                - generic: Protects farms from crows
+            - generic:
+              - generic: 1× Pumpkin
+              - generic: 3× Cut Grass
+              - generic: 3× Boards
+          - generic:
+            - generic:
+              - generic: 🧊
+              - generic:
+                - generic: Endothermic Fire
+                - generic: Temporary cooling light source for summer
+            - generic:
+              - generic: 3× Cut Grass
+              - generic: 2× Nitre
+          - generic:
+            - generic:
+              - generic: 🌕
+              - generic:
+                - generic: Brightsmithy
+                - generic: Lunar crafting station for brightshade items
+            - generic:
+              - generic: 5× Moon Rock
+              - generic: 5× Moon Shard
+              - generic: 1× Pure Brilliance
+          - generic:
+            - generic:
+              - generic: 🌌
+              - generic:
+                - generic: Portal Paraphernalia
+                - generic: Used on the Florid Postern to begin constructing the Celestial Portal
+            - generic:
+              - generic: 1× Boards
+              - generic: 1× Rope
+          - generic:
+            - generic:
+              - generic: 🌘
+              - generic:
+                - generic: Moon Rock Idol
+                - generic: Offered to the Celestial Portal to switch characters
+            - generic:
+              - generic: 1× Moon Rock
+              - generic: 1× Purple Gem
+          - generic:
+            - generic:
+              - generic: 🎒
+              - generic:
+                - generic: Tent Roll
+                - generic: Portable tent exclusive to Walter
+            - generic:
+              - generic: 1× Straw Roll
+              - generic: 4× Twigs
+              - generic: 2× Rope
+          - generic:
+            - generic:
+              - generic: 🔭
+              - generic:
+                - generic: Astral Detector
+                - generic: Detects celestial anomalies in the world
+            - generic:
+              - generic: 1× Moon Rock
+              - generic: 1× Thulecite
+          - generic:
+            - generic:
+              - generic: 🌙
+              - generic:
+                - generic: Moon Rock Wall
+                - generic: Strong wall that regenerates health over time
+            - generic:
+              - generic: 4× Moon Rock
+          - generic:
+            - generic:
+              - generic: 🖤
+              - generic:
+                - generic: Dreadstone Wall
+                - generic: The strongest wall in the game
+            - generic:
+              - generic: 4× Dreadstone
+          - generic:
+            - generic:
+              - generic: 🔋
+              - generic:
+                - generic: Winona's Generator
+                - generic: Powers Winona's structures for one day. Winona-exclusive
+            - generic:
+              - generic: 1× Trusty Tape
+              - generic: 2× Log
+              - generic: 2× Nitre
+          - generic:
+            - generic:
+              - generic: 💎
+              - generic:
+                - generic: Winona's G.E.M.erator
+                - generic: Advanced generator powered by gems. Winona-exclusive
+            - generic:
+              - generic: 1× Trusty Tape
+              - generic: 2× Boards
+              - generic: 2× Electrical Doodad
+          - generic:
+            - generic:
+              - generic: 🏹
+              - generic:
+                - generic: Winona's Catapult
+                - generic: Automated defense turret that fires rocks. Winona-exclusive
+            - generic:
+              - generic: 1× Trusty Tape
+              - generic: 3× Twigs
+              - generic: 15× Rocks
+          - generic:
+            - generic:
+              - generic: 💡
+              - generic:
+                - generic: Winona's Spotlight
+                - generic: Illuminates nearby players when powered. Winona-exclusive
+            - generic:
+              - generic: 1× Trusty Tape
+              - generic: 2× Gold Nugget
+              - generic: 1× Fireflies
+          - generic:
+            - generic:
+              - generic: 🌀
+              - generic:
+                - generic: The Lazy Deserter
+                - generic: Teleports players between two linked Lazy Deserters
+            - generic:
+              - generic: 1× Desert Stone
+              - generic: 1× Orange Moonlens
+              - generic: 3× Cut Stone
+          - generic:
+            - generic:
+              - generic: 🌡️
+              - generic:
+                - generic: Thermal Measurer
+                - generic: Measures the current ambient temperature
+            - generic:
+              - generic: 2× Boards
+              - generic: 2× Gold Nugget
+          - generic:
+            - generic:
+              - generic: 🪑
+              - generic:
+                - generic: End Table
+                - generic: Decorative table that displays a single item
+            - generic:
+              - generic: 2× Marble
+              - generic: 2× Boards
+              - generic: 2× Carpeted Flooring
+          - generic:
+            - generic:
+              - generic: 🧍
+              - generic:
+                - generic: Mannequin
+                - generic: Displays clothing and armor
+            - generic:
+              - generic: 2× Silk
+              - generic: 2× Boards
+              - generic: 3× Cut Grass
+          - generic:
+            - generic:
+              - generic: 🌵
+              - generic:
+                - generic: Potted Succulent
+                - generic: Decorative potted plant
+            - generic:
+              - generic: 2× Succulent
+              - generic: 1× Cut Stone
+          - generic:
+            - generic:
+              - generic: 🥊
+              - generic:
+                - generic: Punching Bag
+                - generic: Training dummy that displays damage numbers
+            - generic:
+              - generic: 3× Cut Grass
+              - generic: 1× Boards
+          - generic:
+            - generic:
+              - generic: 🌉
+              - generic:
+                - generic: Spelunker's Bridge Kit
+                - generic: Builds a bridge over gaps in caves
+            - generic:
+              - generic: 4× Boards
+              - generic: 2× Rope
+          - generic:
+            - generic:
+              - generic: 🏗️
+              - generic:
+                - generic: Pillar Scaffold
+                - generic: Scaffold filled with rocks to create a support pillar
+            - generic:
+              - generic: 1× Cut Stone
+              - generic: 2× Boards
+          - generic:
+            - generic:
+              - generic: ➡️
+              - generic:
+                - generic: Directional Sign
+                - generic: A sign that displays text on the map
+            - generic:
+              - generic: 1× Boards
+          - generic:
+            - generic:
+              - generic: 🌗
+              - generic:
+                - generic: Lunar Siphonator
+                - generic: Multi-stage structure that siphons lunar energy
+            - generic:
+              - generic: 4× Scrap
+              - generic: 5× Moongleam
+              - generic: 2× Electrical Doodad
+          - generic:
+            - generic:
+              - generic: ☀️
+              - generic:
+                - generic: Bright Boxer
+                - generic: Lunar-aligned punching bag with planar protection
+            - generic:
+              - generic: 3× Cut Grass
+              - generic: 1× Boards
+              - generic: 1× Pure Brilliance
+          - generic:
+            - generic:
+              - generic: 🌑
+              - generic:
+                - generic: Shadow Boxer
+                - generic: Shadow-aligned punching bag with planar protection
+            - generic:
+              - generic: 3× Cut Grass
+              - generic: 1× Boards
+              - generic: 1× Pure Horror
+          - generic:
+            - generic:
+              - generic: 🧱
+              - generic:
+                - generic: Masonry Oven
+                - generic: Seasonal cooking station for Winter's Feast recipes
+            - generic:
+              - generic: 1× Cut Stone
+              - generic: 1× Marble
+              - generic: 1× Log
+        - generic:
+          - button "Ground Tiles (read only)":
+            - generic:
+              - text: Ground Tiles
+              - generic: (read only)
+            - img
+      - button "Esconder estruturas" [ref=e17] [cursor=pointer]:
+        - img [ref=e18]
+      - main [ref=e20]:
+        - generic [ref=e21]:
+          - generic [ref=e22]:
+            - img [ref=e23]
+            - generic [ref=e25]: "0 structures • 0 tiles • Zoom: 100%"
+          - generic [ref=e26]:
+            - button [ref=e27] [cursor=pointer]:
+              - img
+            - button [ref=e28] [cursor=pointer]:
+              - img
+            - button "Center on content" [ref=e29] [cursor=pointer]:
+              - img
+        - generic [ref=e30]:
+          - generic:
+            - generic:
+              - generic:
+                - img
+              - heading "Drag or click to place" [level=3]
+              - paragraph: Drag from the library or click on a structure/tile and then on the grid
+      - button "Esconder materiais" [ref=e32] [cursor=pointer]:
+        - img [ref=e33]
+      - complementary [ref=e35]:
+        - generic [ref=e36]:
+          - generic [ref=e37]:
+            - generic [ref=e38]:
+              - heading "Materials Needed" [level=3] [ref=e39]
+              - generic [ref=e40]: 0 items
+            - generic [ref=e41]:
+              - img [ref=e43]
+              - heading "No Materials Yet" [level=3] [ref=e47]
+              - paragraph [ref=e48]: Place structures on the canvas to see required materials
+          - generic [ref=e49]:
+            - generic [ref=e50]:
+              - heading "Build Checklist" [level=3] [ref=e51]
+              - generic [ref=e52]: 0/0
+            - generic [ref=e53]:
+              - img [ref=e55]
+              - heading "Nothing to Build" [level=3] [ref=e58]
+              - paragraph [ref=e59]: Structures you place will appear here as a checklist
