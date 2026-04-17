@@ -208,15 +208,22 @@ export function DSTPixiCanvas({
       return
     }
 
-    if (e.button === 0 && !isReadOnly) {
+    if (e.button === 0) {
       const tile = selectedGroundTileRef.current
       const erasing = isErasingRef.current
-      if (tile || erasing) {
+      const struct = selectedStructureRef.current
+
+      if (!isReadOnly && (tile || erasing)) {
         isPainting.current = true
         lastPaintedCell.current = null
         e.currentTarget.setPointerCapture(e.pointerId)
         const world = getWorldPos(e)
         paintTileAt(world.x, world.y)
+      } else if (!struct) {
+        // No tool selected — left drag = pan
+        isPanning.current = true
+        lastPtr.current = { x: e.clientX, y: e.clientY }
+        e.currentTarget.setPointerCapture(e.pointerId)
       }
     }
   }, [isReadOnly, getWorldPos, paintTileAt])
@@ -258,7 +265,11 @@ export function DSTPixiCanvas({
       return
     }
 
-    if (isPanning.current && (e.button === 1 || e.button === 2)) {
+    if (isPanning.current && e.button !== 0) {
+      isPanning.current = false
+      return
+    }
+    if (isPanning.current && e.button === 0) {
       isPanning.current = false
       return
     }
@@ -274,9 +285,16 @@ export function DSTPixiCanvas({
   }, [isReadOnly, onAddStructure, getWorldPos])
 
   const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault()
     const rect = containerRef.current!.getBoundingClientRect()
-    onZoom(e.deltaY, e.clientX - rect.left, e.clientY - rect.top, rect.width, rect.height)
-  }, [onZoom])
+    if (e.ctrlKey) {
+      // Pinch-to-zoom on trackpad
+      onZoom(e.deltaY, e.clientX - rect.left, e.clientY - rect.top, rect.width, rect.height)
+    } else {
+      // Two-finger scroll = pan
+      onPan(e.deltaX, e.deltaY)
+    }
+  }, [onZoom, onPan])
 
   const handlePointerLeave = useCallback(() => {
     isPanning.current = false
@@ -286,7 +304,11 @@ export function DSTPixiCanvas({
   }, [])
 
   const hasTileMode = (selectedGroundTile || isErasingTiles) && !isReadOnly
-  const cursor = selectedStructure && !isReadOnly ? 'crosshair' : hasTileMode ? 'cell' : 'default'
+  const cursor = selectedStructure && !isReadOnly
+    ? 'crosshair'
+    : hasTileMode
+    ? 'cell'
+    : 'grab'
 
   return (
     <div
