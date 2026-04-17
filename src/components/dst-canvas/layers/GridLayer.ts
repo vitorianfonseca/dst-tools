@@ -26,13 +26,13 @@ export class GridLayer {
     const u1y = Math.ceil(bottom) + 1
 
     for (let ux = u0x; ux <= u1x; ux++) {
-      const isTile = ux % UNITS_PER_TILE === 0
+      const isTile = ((ux % UNITS_PER_TILE) + UNITS_PER_TILE) % UNITS_PER_TILE === 0
       const sx = worldToScreen(ux, 0, camera, screenW, screenH).x
       this.g.moveTo(sx, 0).lineTo(sx, screenH)
         .stroke({ width: 1, color: 0x3a2f24, alpha: isTile ? 0.45 : 0.15 })
     }
     for (let uy = u0y; uy <= u1y; uy++) {
-      const isTile = uy % UNITS_PER_TILE === 0
+      const isTile = ((uy % UNITS_PER_TILE) + UNITS_PER_TILE) % UNITS_PER_TILE === 0
       const sy = worldToScreen(0, uy, camera, screenW, screenH).y
       this.g.moveTo(0, sy).lineTo(screenW, sy)
         .stroke({ width: 1, color: 0x3a2f24, alpha: isTile ? 0.45 : 0.15 })

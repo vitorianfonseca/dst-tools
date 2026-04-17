@@ -29,6 +29,7 @@ export class GhostLayer {
 
     try {
       const tex: Texture = await Assets.load(`/src/assets/structures/${id}.png`)
+      if (this.loadedId !== id) return  // stale load guard
       this.sprite = new Sprite(tex)
       this.sprite.anchor.set(0.5, ANCHOR_Y)
       this.sprite.alpha = 0.55
@@ -46,7 +47,7 @@ export class GhostLayer {
       this.sprite.position.set(screen.x, screen.y)
       this.sprite.width = sizePx
       this.sprite.height = sizePx
-      this.sprite.tint = isValid ? 0xffffff : 0xff4444
+      this.sprite.tint = isValid ? 0x44ff88 : 0xff4444
     }
 
     this.ring.clear()

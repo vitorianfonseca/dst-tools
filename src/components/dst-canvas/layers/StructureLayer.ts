@@ -65,7 +65,7 @@ export class StructureLayer {
       sprite.position.set(screen.x, screen.y)
       sprite.width = sizePx
       sprite.height = sizePx
-      sprite.tint = s.built ? 0x88aa66 : selectedId === s.id ? 0xd4823b : 0xffffff
+      sprite.tint = selectedId === s.id ? 0xd4823b : s.built ? 0x88aa66 : 0xffffff
       sprite.zIndex = s.gridY
       sprite.alpha = s.built ? 0.7 : 1
     }
