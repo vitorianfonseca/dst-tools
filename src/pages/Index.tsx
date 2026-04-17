@@ -93,6 +93,7 @@ const Index = () => {
     setSelectedStructure(null);
     setSelectedGroundTile(null);
     setIsErasingTiles(false);
+    setSelectedStructureId(null);
   }, []);
 
   // Check if current workspace belongs to the user
@@ -137,6 +138,28 @@ const Index = () => {
       category: "Tools",
     },
     {
+      key: "Delete",
+      action: () => {
+        if (canEdit && selectedStructureId) {
+          removeStructure(selectedStructureId);
+          setSelectedStructureId(null);
+        }
+      },
+      description: "Delete selected structure",
+      category: "Editing",
+    },
+    {
+      key: "Backspace",
+      action: () => {
+        if (canEdit && selectedStructureId) {
+          removeStructure(selectedStructureId);
+          setSelectedStructureId(null);
+        }
+      },
+      description: "Delete selected structure",
+      category: "Editing",
+    },
+    {
       key: "e",
       action: () => {
         if (!canEdit) return;
@@ -152,7 +175,7 @@ const Index = () => {
       description: "Toggle eraser",
       category: "Tools",
     },
-  ], [handleUndo, handleRedo, handleClearSelection, canEdit]);
+  ], [handleUndo, handleRedo, handleClearSelection, canEdit, selectedStructureId, removeStructure]);
 
   // Shortcuts always enabled — actions guard canEdit internally
   useKeyboardShortcuts(shortcuts, true);

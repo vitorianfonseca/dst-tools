@@ -62,6 +62,7 @@ export function DSTPixiCanvas({
   const isPainting = useRef(false)
   const lastPaintedCell = useRef<{ x: number; y: number } | null>(null)
   const lastPtr = useRef({ x: 0, y: 0 })
+  const downPos = useRef({ x: 0, y: 0 })
   const cameraRef = useRef(camera)
   const structuresRef = useRef(placedStructures)
   const groundTilesRef = useRef(groundTiles)
@@ -78,9 +79,7 @@ export function DSTPixiCanvas({
   selectedGroundTileRef.current = selectedGroundTile
   isErasingRef.current = isErasingTiles
 
-  void onRemoveStructure
   void onMoveStructure
-  void onSelectStructure
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -200,11 +199,38 @@ export function DSTPixiCanvas({
     }
   }, [onAddTile, onRemoveTile, worldToTileCoords])
 
+  // Returns the placed structure closest to world pos within threshold units, or null
+  const findStructureAt = useCallback((worldX: number, worldY: number) => {
+    const THRESHOLD = 2.5
+    let closest: PlacedStructure | null = null
+    let minDist = THRESHOLD
+    for (const s of structuresRef.current) {
+      const d = Math.hypot(s.gridX - worldX, s.gridY - worldY)
+      if (d < minDist) { minDist = d; closest = s }
+    }
+    return closest
+  }, [])
+
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
-    if (e.button === 1 || e.button === 2) {
+    // Middle-click = pan
+    if (e.button === 1) {
       isPanning.current = true
       lastPtr.current = { x: e.clientX, y: e.clientY }
       e.currentTarget.setPointerCapture(e.pointerId)
+      return
+    }
+
+    // Right-click = erase structure or tile at cursor
+    if (e.button === 2 && !isReadOnly) {
+      const world = getWorldPos(e)
+      const hit = findStructureAt(world.x, world.y)
+      if (hit) {
+        onRemoveStructure(hit.id)
+        onSelectStructure(null)
+      } else {
+        const { x, y } = worldToTileCoords(world.x, world.y)
+        onRemoveTile(x, y)
+      }
       return
     }
 
@@ -219,14 +245,15 @@ export function DSTPixiCanvas({
         e.currentTarget.setPointerCapture(e.pointerId)
         const world = getWorldPos(e)
         paintTileAt(world.x, world.y)
-      } else if (!struct) {
-        // No tool selected — left drag = pan
-        isPanning.current = true
+      } else {
+        // Pan or select — track down position to distinguish click vs drag
+        isPanning.current = !struct  // pan if no structure tool
         lastPtr.current = { x: e.clientX, y: e.clientY }
+        downPos.current = { x: e.clientX, y: e.clientY }
         e.currentTarget.setPointerCapture(e.pointerId)
       }
     }
-  }, [isReadOnly, getWorldPos, paintTileAt])
+  }, [isReadOnly, getWorldPos, paintTileAt, findStructureAt, onRemoveStructure, onSelectStructure, onRemoveTile, worldToTileCoords])
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
     if (isPanning.current) {
@@ -265,24 +292,28 @@ export function DSTPixiCanvas({
       return
     }
 
-    if (isPanning.current && e.button !== 0) {
-      isPanning.current = false
-      return
-    }
-    if (isPanning.current && e.button === 0) {
-      isPanning.current = false
-      return
-    }
+    const wasPanning = isPanning.current
+    isPanning.current = false
 
     if (e.button === 0 && !isReadOnly) {
       const selStruct = selectedStructureRef.current
       if (selStruct) {
+        // Place structure
         const world = getWorldPos(e)
         const snapped = { x: Math.round(world.x), y: Math.round(world.y) }
         onAddStructure(selStruct, snapped.x, snapped.y)
+      } else if (wasPanning) {
+        // Check if it was a click (barely moved) → select structure
+        const dx = e.clientX - downPos.current.x
+        const dy = e.clientY - downPos.current.y
+        if (Math.hypot(dx, dy) < 5) {
+          const world = getWorldPos(e)
+          const hit = findStructureAt(world.x, world.y)
+          onSelectStructure(hit ? hit.id : null)
+        }
       }
     }
-  }, [isReadOnly, onAddStructure, getWorldPos])
+  }, [isReadOnly, onAddStructure, onSelectStructure, getWorldPos, findStructureAt])
 
   const handleWheel = useCallback((e: React.WheelEvent) => {
     e.preventDefault()
