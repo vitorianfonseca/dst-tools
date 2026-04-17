@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Header } from "@/components/Header";
 import { StructureLibrary } from "@/components/StructureLibrary";
-import { PlanningCanvas } from "@/components/PlanningCanvas";
+import { DSTPixiCanvas, useCamera } from "@/components/dst-canvas";
 import { RightSidebar } from "@/components/RightSidebar";
 import { usePlacedStructures, PlacedStructure } from "@/hooks/usePlacedStructures";
 import { useGroundTiles, PlacedGroundTile } from "@/hooks/useGroundTiles";
@@ -26,6 +26,9 @@ const Index = () => {
   const [isDuplicating, setIsDuplicating] = useState(false);
   const [showLeftSidebar, setShowLeftSidebar] = useState(true);
   const [showRightSidebar, setShowRightSidebar] = useState(true);
+
+  const { camera, pan, zoom: zoomCamera } = useCamera(1);
+  const [selectedStructureId, setSelectedStructureId] = useState<string | null>(null);
 
   // History for undo/redo
   const { pushState, undo, redo, canUndo, canRedo, clear: clearHistory } = useHistory();
@@ -94,7 +97,7 @@ const Index = () => {
 
   // Check if current workspace belongs to the user
   const isOwnWorkspace = !!user && !!currentWorkspace && currentWorkspace.user_id === user.id;
-  const canEdit = isOwnWorkspace;
+  const canEdit = !currentWorkspace || isOwnWorkspace;
   const isReadOnly = !!currentWorkspace && !isOwnWorkspace;
 
   // Define all keyboard shortcuts
@@ -262,27 +265,22 @@ const Index = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </button>
-        <PlanningCanvas
+        <DSTPixiCanvas
           placedStructures={placedStructures}
-          groundTiles={groundTiles}
-          onAddStructure={canEdit ? addStructure : () => { }}
-          onRemoveStructure={canEdit ? removeStructure : () => { }}
-          onToggleBuilt={canEdit ? toggleBuilt : () => { }}
-          onMoveStructure={canEdit ? moveStructure : () => { }}
-          onClearAll={canEdit ? clearAll : () => { }}
-          onAddTile={canEdit ? addTile : () => { }}
-          onAddTilesInArea={canEdit ? addTilesInArea : () => { }}
-          onRemoveTilesInArea={canEdit ? removeTilesInArea : () => { }}
-          onRemoveTile={canEdit ? removeTile : () => { }}
           selectedStructure={canEdit ? selectedStructure : null}
-          selectedGroundTile={canEdit ? selectedGroundTile : null}
-          isErasingTiles={isErasingTiles}
-          onClearSelection={() => setSelectedStructure(null)}
-          onClearGroundTileSelection={() => {
-            setSelectedGroundTile(null);
-            setIsErasingTiles(false);
-          }}
+          selectedId={selectedStructureId}
+          camera={camera}
           isReadOnly={isReadOnly}
+          onAddStructure={(structure, gridX, gridY) => {
+            if (canEdit) addStructure(structure, gridX, gridY);
+          }}
+          onRemoveStructure={id => { if (canEdit) removeStructure(id); }}
+          onMoveStructure={(id, gridX, gridY) => { if (canEdit) moveStructure(id, gridX, gridY); }}
+          onSelectStructure={setSelectedStructureId}
+          onPan={pan}
+          onZoom={(delta, pivotX, pivotY, screenW, screenH) =>
+            zoomCamera(delta, pivotX, pivotY, screenW, screenH)
+          }
         />
         <button
           onClick={() => setShowRightSidebar(!showRightSidebar)}

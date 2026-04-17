@@ -158,7 +158,7 @@ export function DSTPixiCanvas({
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
     if (isPanning.current) {
-      onPan(e.clientX - lastPtr.current.x, e.clientY - lastPtr.current.y)
+      onPan(-(e.clientX - lastPtr.current.x), -(e.clientY - lastPtr.current.y))
       lastPtr.current = { x: e.clientX, y: e.clientY }
     }
 
