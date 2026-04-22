@@ -7,7 +7,7 @@ import { Globe, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { getProfiles, getWorkspaces } from "@/lib/localData";
+import { apiRequest } from "@/lib/api";
 
 interface PublicWorkspace {
   id: string;
@@ -20,7 +20,7 @@ interface PublicWorkspace {
     id: string;
     display_name: string;
     avatar_url?: string;
-  };
+  } | null;
 }
 
 export function PublicDatabaseBrowser() {
@@ -36,7 +36,6 @@ export function PublicDatabaseBrowser() {
   }, []);
 
   useEffect(() => {
-    // Filter workspaces based on search query
     if (searchQuery.trim() === "") {
       setFilteredWorkspaces(publicWorkspaces);
     } else {
@@ -55,22 +54,13 @@ export function PublicDatabaseBrowser() {
   const fetchPublicWorkspaces = async () => {
     setLoading(true);
     try {
-      const profiles = getProfiles();
-      const profileMap = new Map(profiles.map((profile) => [profile.id, profile]));
-      const workspaces = getWorkspaces()
-        .filter((workspace) => workspace.visibility === "public")
-        .sort((a, b) => b.created_at.localeCompare(a.created_at));
-
-      const transformedWorkspaces = workspaces.map((workspace) => ({
-        ...workspace,
-        owner: profileMap.get(workspace.user_id),
-      }));
-
-      setPublicWorkspaces(transformedWorkspaces);
-      setFilteredWorkspaces(transformedWorkspaces);
+      const params = user ? `?excludeUserId=${user.id}` : "";
+      const workspaces = await apiRequest<PublicWorkspace[]>(`/workspaces/public${params}`);
+      setPublicWorkspaces(workspaces);
+      setFilteredWorkspaces(workspaces);
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Error loading public bases");
+      toast.error("Erro ao carregar bases públicas");
     } finally {
       setLoading(false);
     }
@@ -82,8 +72,6 @@ export function PublicDatabaseBrowser() {
       navigate("/auth");
       return;
     }
-
-    // Open the workspace as read-only view
     localStorage.setItem("dst-planner-current-workspace", workspaceId);
     navigate("/");
   };
@@ -92,7 +80,7 @@ export function PublicDatabaseBrowser() {
     return (
       <div className="bg-black/40 border border-white/10 rounded-lg p-12">
         <div className="flex items-center justify-center">
-          <div className="animate-pulse text-white/60">Loading public databases...</div>
+          <div className="animate-pulse text-white/60">A carregar bases públicas...</div>
         </div>
       </div>
     );
@@ -107,13 +95,13 @@ export function PublicDatabaseBrowser() {
             <Globe className="h-8 w-8 text-[#d4823b]" />
             Bases da Comunidade
           </h2>
-          <p className="text-white/60">Explore public plans created by other players</p>
+          <p className="text-white/60">Explora planos públicos criados por outros jogadores</p>
         </div>
         <div className="flex gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-white/40" />
             <Input
-              placeholder="Search by name, description or creator..."
+              placeholder="Pesquisar por nome, descrição ou criador..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-11 h-12 bg-black/60 border-white/20 text-white placeholder:text-white/40"
@@ -127,8 +115,8 @@ export function PublicDatabaseBrowser() {
         <div className="bg-black/40 border border-white/10 rounded-lg p-12">
           <div className="text-center text-white/60 text-lg">
             {publicWorkspaces.length === 0
-              ? "No public databases yet"
-              : "No bases found with that search"}
+              ? "Ainda não há bases públicas"
+              : "Nenhuma base encontrada com essa pesquisa"}
           </div>
         </div>
       ) : (
@@ -158,14 +146,14 @@ export function PublicDatabaseBrowser() {
                 {/* Workspace Info */}
                 <h3 className="font-black text-lg mb-2 line-clamp-2 uppercase tracking-tight" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>{workspace.name}</h3>
                 <p className="text-sm text-white/60 mb-4 line-clamp-2">
-                  {workspace.description || "No description"}
+                  {workspace.description || "Sem descrição"}
                 </p>
 
                 {/* Metadata */}
                 <div className="flex items-center justify-between mb-4">
                   <Badge className="text-xs gap-1.5 bg-[#d4823b]/20 border border-[#d4823b]/30 text-[#d4823b]">
                     <Globe className="h-3 w-3" />
-                    Public
+                    Público
                   </Badge>
                   <span className="text-xs text-white/50">
                     {new Date(workspace.created_at).toLocaleDateString("pt-PT")}
@@ -190,13 +178,13 @@ export function PublicDatabaseBrowser() {
         <div className="grid grid-cols-3 gap-8 text-center">
           <div>
             <p className="text-4xl font-black text-[#d4823b] mb-2" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>{publicWorkspaces.length}</p>
-            <p className="text-sm text-white/60 uppercase tracking-wide font-bold">Public Bases</p>
+            <p className="text-sm text-white/60 uppercase tracking-wide font-bold">Bases Públicas</p>
           </div>
           <div>
             <p className="text-4xl font-black text-[#d4823b] mb-2" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>
               {new Set(publicWorkspaces.map((w) => w.user_id)).size}
             </p>
-            <p className="text-sm text-white/60 uppercase tracking-wide font-bold">Creators</p>
+            <p className="text-sm text-white/60 uppercase tracking-wide font-bold">Criadores</p>
           </div>
           <div>
             <p className="text-4xl font-black text-[#d4823b] mb-2" style={{ fontFamily: 'Impact, "Arial Black", sans-serif' }}>{filteredWorkspaces.length}</p>

@@ -11,12 +11,27 @@ import { motion } from "framer-motion";
 import {
   Users, BookOpen, ArrowRight, MapPin, Calendar, Swords, Globe, Flame, Search,
 } from "lucide-react";
-import { getWorkspaces, getProfiles, type LocalWorkspace, type LocalProfile } from "@/lib/localData";
+import { apiRequest } from "@/lib/api";
 import { PlacedStructure } from "@/hooks/usePlacedStructures";
 import heroImage from "@/assets/1.png";
 
 interface WorkspaceData {
   structures?: PlacedStructure[];
+}
+
+interface ApiWorkspace {
+  id: string;
+  user_id: string;
+  name: string;
+  visibility: "public" | "private";
+  data: WorkspaceData | null;
+  created_at: string;
+  updated_at: string;
+  owner?: {
+    id: string;
+    display_name?: string | null;
+    avatar_url?: string | null;
+  } | null;
 }
 
 const IMPACT_FONT = 'Impact, "Arial Black", sans-serif';
@@ -69,33 +84,27 @@ export default function Landing() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string | null>(null);
-  const [publicWorkspaces, setPublicWorkspaces] = useState<(LocalWorkspace & { owner?: LocalProfile })[]>([]);
+  const [allPublicWorkspaces, setAllPublicWorkspaces] = useState<ApiWorkspace[]>([]);
 
   useEffect(() => {
-    const profiles = getProfiles();
-    const profileMap = new Map(profiles.map((p) => [p.id, p]));
-    const workspaces = getWorkspaces()
-      .filter((w) => w.visibility === "public")
-      .sort((a, b) => b.updated_at.localeCompare(a.updated_at))
-      .slice(0, 6);
-    setPublicWorkspaces(workspaces.map((w) => ({ ...w, owner: profileMap.get(w.user_id) })));
+    apiRequest<ApiWorkspace[]>("/workspaces/public")
+      .then(setAllPublicWorkspaces)
+      .catch(() => setAllPublicWorkspaces([]));
   }, []);
+
+  const publicWorkspaces = allPublicWorkspaces.slice(0, 6);
 
   const communityStats = useMemo(() => {
-    const allWorkspaces = getWorkspaces();
-    const publicCount = allWorkspaces.filter((w) => w.visibility === "public").length;
-    const creators = new Set(allWorkspaces.map((w) => w.user_id)).size;
-    let totalStructures = 0;
-    for (const w of allWorkspaces) {
-      const data = w.data as WorkspaceData | null;
-      totalStructures += data?.structures?.length ?? 0;
-    }
+    const publicCount = allPublicWorkspaces.length;
+    const creators = new Set(allPublicWorkspaces.map((w) => w.user_id)).size;
+    const totalStructures = allPublicWorkspaces.reduce(
+      (sum, w) => sum + (w.data?.structures?.length ?? 0), 0
+    );
     return { publicCount, creators, totalStructures };
-  }, []);
+  }, [allPublicWorkspaces]);
 
-  const getStructureCount = (workspace: LocalWorkspace) => {
-    const data = workspace.data as WorkspaceData | null;
-    return data?.structures?.length ?? 0;
+  const getStructureCount = (workspace: ApiWorkspace) => {
+    return workspace.data?.structures?.length ?? 0;
   };
 
   return (
