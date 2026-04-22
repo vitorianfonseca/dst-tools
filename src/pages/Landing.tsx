@@ -456,6 +456,17 @@ export default function Landing() {
           <div className="text-center text-xs text-white/40 pt-6 border-t border-white/5">
             <p>This project is a fan-made tool and is not officially affiliated with Klei Entertainment.</p>
             <p className="mt-1">Don&apos;t Starve Together and all related assets are property of Klei Entertainment Inc.</p>
+            <p className="mt-2">
+              Built by{" "}
+              <a
+                href="https://bynexa.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white font-medium hover:underline transition-all"
+              >
+                Nexa ↗
+              </a>
+            </p>
           </div>
         </div>
       </footer>
